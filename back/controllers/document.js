@@ -137,7 +137,7 @@ const translate = async (req, res) =>{
         "ES", "ET", "FI", "FR", "HU", "ID", "IT", "JA",
         "KO", "LT", "LV", "NB", "NL", "PL", "PT-BR",
         "PT-PT", "RO", "RU", "SK", "SL", "SV", "TR",
-        "UK", "ZH", "HE"
+        "UK", "ZH"
     ];
     let upperLanguage = language.toUpperCase()
     if (!VALID_LANGUAGES.includes(upperLanguage))
