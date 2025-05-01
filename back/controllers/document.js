@@ -51,21 +51,16 @@ async function searchDocuments(req, res) {
 }
 
 async function deepSearch(req, res) {
-    // Get the documents to search from the request body
-    const documents = req.body.documents
-    // If no documents are provided, return a 400 Bad Request error
-    if (!documents)
-        return res.status(400).json({message: 'Documents is required'})
-
     // Get the search query from the request query parameters
     const query = req.query.query
+    const userId = req.userId
     // If no query is provided, return a 400 Bad Request error
     if (!query)
         return res.status(400).json({message: 'Query is required'})
 
     try {
         // Get the results from the services layer
-        const results = await DocumentService.deepSearch(documents, query)
+        const results = await DocumentService.deepSearch(userId, query)
         return res.status(200).json({results: results})
     } catch (err) {
         // Handle unexpected errors

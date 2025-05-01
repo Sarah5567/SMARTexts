@@ -69,7 +69,10 @@ async function searchDocuments(userId, query){
     })
 }
 
-async function deepSearch(documents, query){
+async function deepSearch(userId, query){
+    const user = await User.findById(userId).populate('documents')
+    const documents = user.documents.map(d => `${d.title}: ${d.summary}`);
+
 
     const cohere = new CohereClient({token: process.env.COHERE_API_KEY});
 
@@ -81,7 +84,7 @@ async function deepSearch(documents, query){
     });
     return rerank.results
         .filter(r=>r.relevanceScore > 0.5)
-        .map(r=>documents[r.index])
+        .map(r=>r.index)
 }
 
 async function translate(text, language){
