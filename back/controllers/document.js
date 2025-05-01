@@ -17,10 +17,7 @@ async function getDocument(req, res) {
 
 async function createDocument(req, res) {
     const userId = req.userId
-    console.log('userId: '+ userId)
     const {title, content} = req.body;
-    console.log('title: ' + title)
-    console.log('content: '+content)
     try {
         console.log(userId, title, content)
         // Create a new document with provided title and content
@@ -79,7 +76,7 @@ async function deepSearch(req, res) {
 
 const updateDocument = async (req, res) => {
     try {
-        const { id, title, content } = req.body;  // מקבלים את הנתונים החדשים מה-body
+        const { id, title, content } = req.body;
 
         const user = await User.findById(req.userId).populate('documents');
 
@@ -94,6 +91,7 @@ const updateDocument = async (req, res) => {
         }
         document.title = title;
         document.content = content;
+        document.summary = await DocumentService.cohereChat("Summarize the following text very shortly:", content)
         await document.save();
 
         res.status(200).json(document);
@@ -152,6 +150,16 @@ const translate = async (req, res) =>{
     }
 }
 
+const summarize = async (req, res) => {
+    const userId = req.userId
+    const docId = req.body.id
+    try {
+        const summary = await DocumentService.summarize(userId, docId)
+        res.status(200).json(summary)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
 
 module.exports = {
     deleteDocument,
@@ -160,5 +168,6 @@ module.exports = {
     createDocument,
     searchDocuments,
     deepSearch,
-    translate
+    translate,
+    summarize
 }

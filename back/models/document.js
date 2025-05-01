@@ -13,8 +13,9 @@ const DocumentSchema   = new mongoose.Schema(
             required: true
         },
 
-        summarize: {
+        summary: {
             type: String,
+            required: true
         }
     },
     {

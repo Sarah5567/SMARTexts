@@ -1,7 +1,7 @@
 const Document = require('../models/document');
 const User = require('../models/user')
 const {spawn} = require('child_process')
-const { CohereClient } = require('cohere-ai');
+const { CohereClient, CohereClientV2} = require('cohere-ai');
 const deepl = require('deepl-node');
 require('dotenv').config()
 
@@ -11,12 +11,14 @@ async function getDocument(userId, docId){
 }
 
 async function createDocument(userId, title, content){
-        // Create a new document with provided title and content
-        const document = new Document({ title, content });
-        await document.save()
-        await User.findByIdAndUpdate(userId, {$push: {documents: document._id}})
+    //summarize the text to improve search speed in the future
+    const summary = cohereChat("Summarize the following text very shortly:", content)
+    // Create a new document with provided title and content
+    const document = new Document({ title, content, summary });
+    await document.save()
+    await User.findByIdAndUpdate(userId, {$push: {documents: document._id}})
 
-        return document;
+    return document;
 }
 
 async function searchDocuments(userId, query){
@@ -88,10 +90,30 @@ async function translate(text, language){
     return await translator.translateText(text, null, language)
 }
 
+async function summarize(userId, docId){
+    document = await getDocument(userId, docId)
+    return cohereChat("Summarize the following text very shortly:", document.content )
+}
+async function cohereChat(message, document){
+    const cohere = new CohereClientV2({
+        token: process.env.COHERE_API_KEY
+    });
+    const response = await cohere.chat({
+        model: 'command-a-03-2025',
+        messages: [
+            { role: 'user', content: message }
+        ],
+        documents: [document]
+    });
+    return response.message.content[0].text
+}
+
 module.exports = {
     getDocument,
     createDocument,
     searchDocuments,
     deepSearch,
-    translate
+    translate,
+    summarize,
+    cohereChat
 }
