@@ -13,7 +13,7 @@ async function getDocument(userId, docId){
 
 async function createDocument(userId, title, content){
     //summarize the text to improve search speed in the future
-    const summary = cohereChat("Summarize the following text very shortly:", content)
+    const summary = await cohereChat("Summarize the following text very shortly:", content)
     // Create a new document with provided title and content
     const document = new Document({ title, content, summary });
     await document.save()

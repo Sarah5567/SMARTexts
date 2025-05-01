@@ -19,7 +19,6 @@ async function createDocument(req, res) {
     const userId = req.userId
     const {title, content} = req.body;
     try {
-        console.log(userId, title, content)
         // Create a new document with provided title and content
         const document = await DocumentService.createDocument(userId, title, content)
         return res.status(200).json(document);
