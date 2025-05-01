@@ -160,6 +160,18 @@ const summarize = async (req, res) => {
         res.status(500).json({message: error.message})
     }
 }
+const question = async (req, res) =>{
+    const userId = req.userId
+    const {docId, question} = req.body
+    try {
+        const answer = await DocumentService.QA(userId, docId, question)
+        res.status(200).json(answer)
+    } catch (error) {
+        if(error.message === "document not found")
+            res.status(404).json({message: error.message})
+        res.status(500).json({message: error.message})
+    }
+}
 
 module.exports = {
     deleteDocument,
@@ -169,5 +181,6 @@ module.exports = {
     searchDocuments,
     deepSearch,
     translate,
-    summarize
+    summarize,
+    question
 }

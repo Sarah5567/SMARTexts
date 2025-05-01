@@ -3,6 +3,7 @@ const User = require('../models/user')
 const {spawn} = require('child_process')
 const { CohereClient, CohereClientV2} = require('cohere-ai');
 const deepl = require('deepl-node');
+const {Error} = require("mongoose");
 require('dotenv').config()
 
 async function getDocument(userId, docId){
@@ -94,6 +95,13 @@ async function summarize(userId, docId){
     document = await getDocument(userId, docId)
     return cohereChat("Summarize the following text very shortly:", document.content )
 }
+
+async function QA(userId, docId, question){
+    document = await getDocument(userId, docId)
+    if (!document)
+        throw new Error("document not found")
+    return cohereChat(question, document.content )
+}
 async function cohereChat(message, document){
     const cohere = new CohereClientV2({
         token: process.env.COHERE_API_KEY
@@ -115,5 +123,6 @@ module.exports = {
     deepSearch,
     translate,
     summarize,
-    cohereChat
+    cohereChat,
+    QA
 }

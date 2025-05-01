@@ -12,5 +12,6 @@ router.post('/createDocument', verifyJWT, DocumentController.createDocument)
 router.post('/deepSearch', verifyJWT, DocumentController.deepSearch)
 router.post('/translate', verifyJWT, DocumentController.translate )
 router.post('/summarize', verifyJWT, DocumentController.summarize )
+router.post('/question', verifyJWT, DocumentController.question )
 
 module.exports = router
