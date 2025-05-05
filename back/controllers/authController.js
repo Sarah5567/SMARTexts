@@ -16,7 +16,15 @@ const login = async (req, res) => {
     if(!match)return res.status(401).json({message:'Unauthorized 2' })
 
     const accessToken= jwt.sign(foundUser,process.env.ACCESS_TOKEN_SECRET)
-    res.json({accessToken:accessToken})
+
+    res.cookie('token', accessToken, {
+        httpOnly: true,
+        sameSite: 'Strict',
+        maxAge: 3600000
+    });
+
+
+    res.status(200).json({name: foundUser.name})
 };
 
 const register = async (req, res) => {
@@ -40,8 +48,12 @@ const register = async (req, res) => {
 
         const userInfo= { _id: user._id, name: user.name, email: user.email }
         const accessToken= jwt.sign(userInfo,process.env.ACCESS_TOKEN_SECRET)
-        res.status(200).json({accessToken:accessToken})
-    }
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            sameSite: 'Strict',
+            maxAge: 3600000
+        });
+        res.status(200).json({name: user.name})    }
     catch (error) {
         return res.status(500).json({ message: error.message });
     }

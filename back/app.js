@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const DocumentRouter = require('./routes/document')
 const authRouter = require('./routes/authRoutes')
 const UserRouter = require('./routes/user')
+const cors = require('cors');
 require('dotenv').config()
 
 mongoose.connect(process.env.MONGODB_CONNECT)
@@ -10,6 +11,15 @@ mongoose.connect(process.env.MONGODB_CONNECT)
 .catch(err=>console.error(err));
 
 const app = express();
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
+
 app.use(express.json());
 app.use('/user', UserRouter)
 app.use('/document', DocumentRouter)
