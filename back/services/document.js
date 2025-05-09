@@ -4,6 +4,8 @@ const {spawn} = require('child_process')
 const { CohereClient } = require('cohere-ai');
 const deepl = require('deepl-node');
 require('dotenv').config()
+const axios = require('axios');
+
 
 async function getDocument(userId, docId){
     const user = await User.findById(userId).populate('documents').exec()
@@ -88,7 +90,32 @@ async function translate(text, language){
     return await translator.translateText(text, null, language)
 }
 
+
+async function getInsightsFromText(text) {
+    const prompt = `Given the following passage, provide 2 very short key insights or conclusions:\n\n${text}`;
+
+    try {
+        const response = await axios.post('https://api.cohere.ai/v1/generate', {
+            model: 'command-r-plus',
+            prompt: prompt,
+            max_tokens: 200
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.COHERE_API_KEY_DASSI}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.data.generations[0].text;
+    } catch (error) {
+        console.error("Error from Cohere API:", error.response?.data || error.message);
+        throw new Error('Failed to fetch insights from Cohere');
+    }
+}
+
+
 module.exports = {
+    getInsightsFromText,
     getDocument,
     createDocument,
     searchDocuments,

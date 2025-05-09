@@ -1,6 +1,8 @@
 const DocumentService = require('../services/document')
 const Document = require('../models/document')
 const User = require("../models/user");
+const { getInsightsFromText } = require('../services/document');
+
 
 async function getDocument(req, res) {
     const userId = req.userId
@@ -152,8 +154,30 @@ const translate = async (req, res) =>{
     }
 }
 
+const generateInsights = async (req, res) => {
+    const { documentId } = req.body;
+
+    try {
+        const document = await Document.findById(documentId);
+        if (!document) {
+            return res.status(404).json({ message: 'Document not found' });
+        }
+
+        const insights = await getInsightsFromText(document.content);
+
+        // עדכון המסמך עם התובנות אם רוצים
+        document.summarize = insights;
+        await document.save();
+
+        res.status(200).json({ insights });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 module.exports = {
+    generateInsights,
     deleteDocument,
     updateDocument,
     getDocument,

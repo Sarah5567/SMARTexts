@@ -11,5 +11,6 @@ router.delete('/deleteDocument', verifyJWT, DocumentController.deleteDocument)
 router.post('/createDocument', verifyJWT, DocumentController.createDocument)
 router.post('/deepSearch', verifyJWT, DocumentController.deepSearch)
 router.post('/translate', verifyJWT, DocumentController.translate )
+router.post('generateInsights',verifyJWT,DocumentController.generateInsights)
 
 module.exports = router
