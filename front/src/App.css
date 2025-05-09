@@ -39,4 +39,97 @@
 
 .read-the-docs {
   color: #888;
+}/* HeroSection.css */
+.hero-section {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to bottom right, #f1efff, #ffffff);
+  color: #000;
+  padding: 0;
+  margin: 0;
 }
+
+  .hero-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background-color: rgba(255, 255, 255, 1); /* נתחיל בצבע מלא */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+
+}
+
+.logo-text {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+}
+
+.nav-links a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rem 10% 5rem; /* הוספנו מרווח עליון כדי לפצות על ה-header */
+
+}
+
+.text-area {
+  max-width: 50%;
+}
+
+.text-area h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.text-area p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.buttons .btn {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  border: none;
+}
+
+.btn-dark {
+  background-color: #000;
+  color: #fff;
+}
+
+.btn-light {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+}
+
+.image-area {
+  width: 40%;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 250px;
+  background-color: #eee;
+  border-radius: 1rem;
+}
+
