@@ -23,7 +23,7 @@ const login = async (req, res) => {
         maxAge: 3600000
     });
 
-
+    console.log(foundUser)
     res.status(200).json({name: foundUser.name})
 };
 
@@ -53,7 +53,7 @@ const register = async (req, res) => {
             sameSite: 'Strict',
             maxAge: 3600000
         });
-        res.status(200).json({name: user.name})    }
+        res.status(200).json({name: user.name})}
     catch (error) {
         return res.status(500).json({ message: error.message });
     }
