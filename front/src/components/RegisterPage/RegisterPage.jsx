@@ -1,6 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import {useDispatch} from "react-redux";
+import {setUser} from "../../store/userSlice.jsx";
 
 export default function Signup() {
     const {
@@ -8,6 +10,8 @@ export default function Signup() {
         handleSubmit,
         formState: { errors }
     } = useForm();
+
+    const dispatch = useDispatch()
 
     const onSubmit = async (data) => {
         try {
@@ -25,8 +29,10 @@ export default function Signup() {
                 }
             );
             console.log('connected')
-            return res.data;
-
+            dispatch(setUser({
+                name: res.name,
+                email: res.email,
+            }))
         }
         catch(err){
             console.log('something went wrong: ' + err.message)
