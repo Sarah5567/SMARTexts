@@ -7,15 +7,20 @@ export default function DocumentsPage() {
                 <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">My Documents</h1>
 
                 {/* Search Section */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+                <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-6 w-full">
                     <input
                         type="text"
                         placeholder="Search documents..."
                         className="w-full md:w-1/2 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
-                        Advanced Search
-                    </button>
+                    <div className="flex gap-2 mt-4 md:mt-0">
+                        <button className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-semibold cursor-pointer">
+                            Standard Search
+                        </button>
+                        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-semibold cursor-pointer">
+                            AI Search
+                        </button>
+                    </div>
                 </div>
 
                 {/* Upload Section */}
@@ -24,7 +29,7 @@ export default function DocumentsPage() {
                     <input
                         type="file"
                         accept=".txt,.pdf"
-                        className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                        className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                     />
                 </div>
 
@@ -41,7 +46,7 @@ export default function DocumentsPage() {
                             <p className="text-sm text-gray-600 mb-4">
                                 A brief description of the document content goes here...
                             </p>
-                            <button className="mt-auto text-blue-600 font-medium hover:underline self-start">
+                            <button className="mt-auto text-blue-600 font-medium hover:underline self-start cursor-pointer">
                                 Open Document
                             </button>
                         </div>
