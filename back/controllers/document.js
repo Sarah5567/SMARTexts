@@ -25,7 +25,6 @@ async function createDocument(req, res) {
     console.log('content: '+content)
     try {
         console.log(userId, title, content)
-        // Create a new document with provided title and content
         const document = await DocumentService.createDocument(userId, title, content)
         return res.status(200).json(document);
     }
@@ -70,7 +69,6 @@ async function deepSearch(req, res) {
         return res.status(400).json({message: 'Query is required'})
 
     try {
-        // Get the results from the services layer
         const results = await DocumentService.deepSearch(documents, query)
         return res.status(200).json({results: results})
     } catch (err) {
