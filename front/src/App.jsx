@@ -19,7 +19,7 @@ const myStore = configureStore({
 function App() {
   return (
     <Provider store={myStore}>
-        <Header />
+        <Main />
     </Provider>
   )
 }
