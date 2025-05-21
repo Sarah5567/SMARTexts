@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import { User, Home, File, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useSelector} from 'react-redux';
 
 function Header() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
+    const userObj = useSelector((state) => state.userSlice);
 
-    // Toggle login for demo purposes
     const toggleLogin = () => {
         if (isLoggedIn) {
             setIsLoggedIn(false);
             setUsername('');
         } else {
             setIsLoggedIn(true);
-            setUsername('Jane Doe');
+            setUsername(userObj.name);
         }
     };
 
     return (
-        <header className="bg-white text-blue-900 shadow-md">
+        <header className="bg-[#f4f4f4] text-blue-900 shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16">
-
-                    {/* Logo - שמאלי ביותר */}
+                    {/* Logo */}
                     <div className="flex items-center mr-6">
                         <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-2">
                             <span className="text-white font-bold text-lg">S</span>
@@ -34,37 +35,45 @@ function Header() {
 
                     {/* Navigation Links */}
                     <div className="flex items-center space-x-4 mr-6">
-                        <a href="#" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50">
+                        <Link
+                            to="/AllDocuments"
+                            className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50"
+                        >
                             <File className="w-4 h-4 mr-1" />
                             Documents
-                        </a>
-                        <a href="#" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50">
+                        </Link>
+                        <Link
+                            to="/"
+                            className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50"
+                        >
                             <Home className="w-4 h-4 mr-1" />
                             Home
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Sign In / Register */}
                     {!isLoggedIn && (
                         <div className="flex items-center space-x-2 mr-6">
-                            <button
-                                onClick={toggleLogin}
+                            <Link
+                                to="/Login"
                                 className="flex items-center px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                             >
                                 <LogIn className="w-4 h-4 mr-1" />
                                 Sign In
-                            </button>
-                            <button className="flex items-center px-3 py-1 text-sm text-white bg-blue-800 hover:bg-blue-900 rounded-md">
+                            </Link>
+                            <Link
+                                to="/Register"
+                                className="flex items-center px-3 py-1 text-sm text-white bg-blue-800 hover:bg-blue-900 rounded-md"
+                            >
                                 <UserPlus className="w-4 h-4 mr-1" />
                                 Register
-                            </button>
+                            </Link>
                         </div>
                     )}
 
-                    {/* Spacer pushes profile to right */}
                     <div className="flex-grow" />
 
-                    {/* Profile - ימני ביותר */}
+                    {/* Profile */}
                     <div className="flex items-center space-x-3">
                         {isLoggedIn ? (
                             <>
