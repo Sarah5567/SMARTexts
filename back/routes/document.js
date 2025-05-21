@@ -7,7 +7,7 @@ router.get('/getDocument', verifyJWT, DocumentController.getDocument)
 router.get('/searchDocuments', verifyJWT, DocumentController.searchDocuments)
 router.post('/updateDocument', verifyJWT, DocumentController.updateDocument)
 router.delete('/deleteDocument', verifyJWT, DocumentController.deleteDocument)
-
+router.post('generateInsights',verifyJWT,DocumentController.generateInsights)
 router.post('/createDocument', verifyJWT, DocumentController.createDocument)
 router.post('/deepSearch', verifyJWT, DocumentController.deepSearch)
 router.post('/translate', verifyJWT, DocumentController.translate )

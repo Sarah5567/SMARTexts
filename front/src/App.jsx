@@ -7,6 +7,7 @@ import LogIN from './components/LogIn/LogInPage.jsx'
 import {configureStore} from "@reduxjs/toolkit";
 import userSlice from "./store/userSlice.jsx";
 import {Provider} from 'react-redux'
+import Header from './components/Header';
 
 
 const myStore = configureStore({
@@ -18,7 +19,7 @@ const myStore = configureStore({
 function App() {
   return (
     <Provider store={myStore}>
-        <Main/>
+        <Header />
     </Provider>
   )
 }
