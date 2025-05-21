@@ -22,64 +22,73 @@ async function createDocument(userId, title, content){
     return document;
 }
 
-async function searchDocuments(userId, query){
-    // Find the user by ID and populate only the 'title' field of the related documents
-    const documents = (await User.findById(userId)
-        .populate({ path: 'documents'})
-        .exec())
-        .documents
-    console.log("after getting documents: " + documents)
+async function searchDocuments(userId, query) {
+    const user = await User.findById(userId)
+        .populate({ path: 'documents' })
+        .exec();
 
-    // Extract the titles from the user's documents
-    const titles = documents.map(doc => doc.title)
+    const documents = user.documents;
 
-    // Spawn a Python process to run the semantic search script
-    const semanticSearch = spawn('python', ['./scripts/semanticSearch.py'])
-    console.log("after calling to semanticSearch")
-    // Send the titles and the query to the Python script via stdin as JSON
+    if (!query)
+        return documents
+    console.log("after getting documents: " + documents);
+
+    const titles = documents.map(doc => doc.title);
+    const semanticSearch = spawn('python', ['./scripts/semanticSearch.py']);
+    console.log("after calling to semanticSearch");
+
     semanticSearch.stdin.write(JSON.stringify({
         texts: titles,
         query: query
-    }))
-    // Close the input stream
-    semanticSearch.stdin.end()
-    console.log("after closing python input stream")
-    // Buffers to collect the script's standard output and error output
-    let stdout = ''
-    let stderr = ''
+    }));
+    semanticSearch.stdin.end();
+    console.log("after closing python input stream");
 
-    // Listen for data from the script's stdout (normal output)
-    semanticSearch.stdout.on('data', function (data){
-        stdout += data.toString()
-    })
+    return new Promise((resolve, reject) => {
+        let stdout = '';
+        let stderr = '';
 
-    // Listen for data from the script's stderr (errors)
-    semanticSearch.stderr.on('data', (data) => {
-        stderr += data.toString()
+        semanticSearch.stdout.on('data', data => {
+            stdout += data.toString();
+        });
+
+        semanticSearch.stderr.on('data', data => {
+            stderr += data.toString();
+        });
+
+        semanticSearch.on('close', code => {
+            console.log("on closing python's output stream");
+
+            if (stderr) {
+                console.error(stderr)
+                return reject(new Error('Invalid JSON from semantic search script:\n' + stderr));
+            }
+
+            try {
+                const parsed = JSON.parse(stdout);
+                const topDocuments = parsed.map(d => documents[d.index]);
+                console.log("documents:\n", topDocuments);
+                resolve(topDocuments);
+            } catch (err) {
+                console.error("error:\n" + err)
+                reject(new Error('Failed to parse JSON:\n' + err.message));
+            }
+        });
     });
-
-    // Handle the close event when the script finishes execution
-    semanticSearch.on('close', (code)=>{
-        console.log("on closing python's output stream")
-        // If there was any error output, return a 500 Internal Server Error
-        let topDocuments;
-        if (stderr)
-            throw new Error('Invalid JSON from semantic search script')
-        else {
-            // Attempt to parse the script's output as JSON and return it
-            const parsed = JSON.parse(stdout);
-            topDocuments = parsed.map(d => documents[d.index]);
-            console.log("documents:\n" + topDocuments)
-            return topDocuments
-        }
-    })
 }
 
+
 async function deepSearch(userId, query){
+    console.log("start service/deepSearch")
+    const allDocuments = (await User.findById(userId)
+        .populate({path: 'documents'})
+        .exec())
+        .documents
     const user = await User.findById(userId).populate('documents')
     const documents = user.documents.map(d => `${d.title}: ${d.summary}`);
-
-
+    if (!query){
+        return allDocuments
+    }
     const cohere = new CohereClient({token: process.env.COHERE_API_KEY});
 
     const rerank = await cohere.v2.rerank({
@@ -90,7 +99,7 @@ async function deepSearch(userId, query){
     });
     return rerank.results
         .filter(r=>r.relevanceScore > 0.5)
-        .map(r=>r.index)
+        .map(r=>allDocuments[r.index])
 }
 
 async function translate(text, language){

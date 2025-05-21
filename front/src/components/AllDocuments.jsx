@@ -4,9 +4,12 @@ import axios from "axios";
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
     const [documents, setDocuments] = useState([])
+    const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         const getDocuments = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(
                     'http://localhost:8080/user/getUserDocuments',
@@ -16,12 +19,16 @@ export default function DocumentsPage() {
             } catch (err) {
                 console.error(err);
             }
+            finally {
+                setLoading(false);
+            }
         };
 
         getDocuments();
     }, []);
     const search = async (e) =>{
-        if(searchType === "standard")
+        setLoading(true);
+        if(searchType === "standard"){
             try {
                 const response = await axios.get(
                     'http://localhost:8080/document/searchDocuments',
@@ -34,20 +41,30 @@ export default function DocumentsPage() {
             } catch (err) {
                 console.error(err);
             }
+        }
+        else{
+            try {
+                const response = await axios.post(
+                    'http://localhost:8080/document/deepSearch',
+                    { query: e.target.value },
+                    { withCredentials: true }
+                );
+                console.log("documents: " + response.data.results)
+                setDocuments(response.data.results);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        setLoading(false);
     }
-    // Sample document data
-    // const documents = [
-    //     { id: 1, title: "Annual Report 2024", description: "Financial summary and company achievements", category: "Finance", date: "May 15, 2025" },
-    //     { id: 2, title: "Project Proposal", description: "New initiative for Q3 with budget breakdown", category: "Planning", date: "May 10, 2025" },
-    //     { id: 3, title: "Market Research", description: "Analysis of current market trends and competitors", category: "Research", date: "May 8, 2025" },
-    //     { id: 4, title: "User Interview Results", description: "Feedback collected from recent user testing", category: "Research", date: "May 3, 2025" },
-    //     { id: 5, title: "Technical Documentation", description: "System architecture and API specifications", category: "Development", date: "Apr 28, 2025" },
-    //     { id: 6, title: "Content Strategy", description: "Content calendar and distribution plans", category: "Marketing", date: "Apr 25, 2025" },
-    // ];
-
 
     return (
         <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center p-6 overflow-auto">
+            {loading && (
+                <div className="fixed inset-0 flex justify-center items-center z-50 pointer-events-none">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
             <div className="w-full max-w-6xl">
                 {/* Header with decorative elements */}
                 <div className="relative mb-12 pt-4">

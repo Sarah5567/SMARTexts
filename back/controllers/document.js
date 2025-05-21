@@ -31,18 +31,15 @@ async function createDocument(req, res) {
 }
 
 async function searchDocuments(req, res) {
-    console.log("working on that...")
+    console.log("working on it...")
     // Get the search query from the request query parameters
     const query = req.query.query
-    // If no query is provided, return a 400 Bad Request error
-    if (!query)
-        return res.status(400).json({message: 'No query provided'})
 
     const userId = req.userId
 
     try {
         const results = await DocumentService.searchDocuments(userId, query)
-        return res.status(200).json(JSON.parse(results))
+        return res.status(200).json(results)
 
     } catch (err) {
         // Handle unexpected errors
@@ -52,11 +49,8 @@ async function searchDocuments(req, res) {
 
 async function deepSearch(req, res) {
     // Get the search query from the request query parameters
-    const query = req.query.query
+    const query = req.body.query
     const userId = req.userId
-    // If no query is provided, return a 400 Bad Request error
-    if (!query)
-        return res.status(400).json({message: 'Query is required'})
 
     try {
         // Get the results from the services layer
@@ -90,7 +84,6 @@ const updateDocument = async (req, res) => {
 
         res.status(200).json(document);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 };

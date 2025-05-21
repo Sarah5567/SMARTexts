@@ -96,8 +96,8 @@ def main():
     # Filter the similar results and sort them (descending)
     similarity_scores = similarities[0]
     sorted_indices = np.argsort(similarity_scores)[::-1]
-    threshold = 0.5
-    top_documents = [{'title': texts[i], 'index': i} for i in sorted_indices if similarity_scores[i] > threshold]
+    threshold = 0.3
+    top_documents = [{'title': texts[i], 'index': int(i)} for i in sorted_indices if similarity_scores[i] > threshold]
 
     # Output sorted documents as JSON
     print(json.dumps(top_documents))
