@@ -30,8 +30,8 @@ export default function Signup() {
             );
             console.log('connected')
             dispatch(setUser({
-                name: res.name,
-                email: res.email,
+                name: res.data.name,
+                email: res.data.email,
             }))
         }
         catch(err){

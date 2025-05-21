@@ -25,16 +25,17 @@ async function createDocument(userId, title, content){
 async function searchDocuments(userId, query){
     // Find the user by ID and populate only the 'title' field of the related documents
     const documents = (await User.findById(userId)
-        .populate({ path: 'documents', select: 'title' })
+        .populate({ path: 'documents'})
         .exec())
         .documents
+    console.log("after getting documents: " + documents)
 
     // Extract the titles from the user's documents
     const titles = documents.map(doc => doc.title)
 
     // Spawn a Python process to run the semantic search script
     const semanticSearch = spawn('python', ['./scripts/semanticSearch.py'])
-
+    console.log("after calling to semanticSearch")
     // Send the titles and the query to the Python script via stdin as JSON
     semanticSearch.stdin.write(JSON.stringify({
         texts: titles,
@@ -42,7 +43,7 @@ async function searchDocuments(userId, query){
     }))
     // Close the input stream
     semanticSearch.stdin.end()
-
+    console.log("after closing python input stream")
     // Buffers to collect the script's standard output and error output
     let stdout = ''
     let stderr = ''
@@ -59,13 +60,18 @@ async function searchDocuments(userId, query){
 
     // Handle the close event when the script finishes execution
     semanticSearch.on('close', (code)=>{
-
+        console.log("on closing python's output stream")
         // If there was any error output, return a 500 Internal Server Error
-        if(stderr)
+        let topDocuments;
+        if (stderr)
             throw new Error('Invalid JSON from semantic search script')
-        else
+        else {
             // Attempt to parse the script's output as JSON and return it
-            return JSON.parse(stdout)
+            const parsed = JSON.parse(stdout);
+            topDocuments = parsed.map(d => documents[d.index]);
+            console.log("documents:\n" + topDocuments)
+            return topDocuments
+        }
     })
 }
 

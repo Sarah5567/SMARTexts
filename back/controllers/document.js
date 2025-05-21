@@ -31,7 +31,7 @@ async function createDocument(req, res) {
 }
 
 async function searchDocuments(req, res) {
-
+    console.log("working on that...")
     // Get the search query from the request query parameters
     const query = req.query.query
     // If no query is provided, return a 400 Bad Request error

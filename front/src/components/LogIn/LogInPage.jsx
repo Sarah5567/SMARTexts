@@ -23,9 +23,10 @@ export default function Main() {
                     }
                 }
             );
+            console.log(res.data.name)
             dispatch(setUser({
-                name: res.name,
-                email: res.email,
+                name: res.data.name,
+                email: res.data.email,
             }))
             console.log('connected')
         }
