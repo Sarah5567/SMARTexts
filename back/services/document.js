@@ -118,6 +118,27 @@ async function cohereChat(message, document){
     });
     return response.message.content[0].text
 }
+async function getInsightsFromText(text) {
+    const prompt = `Given the following passage, provide 2 very short key insights or conclusions:\n\n${text}`;
+
+    try {
+        const response = await axios.post('https://api.cohere.ai/v1/generate', {
+            model: 'command-r-plus',
+            prompt: prompt,
+            max_tokens: 200
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.COHERE_API_KEY_DASSI}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.data.generations[0].text;
+    } catch (error) {
+        console.error("Error from Cohere API:", error.response?.data || error.message);
+        throw new Error('Failed to fetch insights from Cohere');
+    }
+}
 
 module.exports = {
     getDocument,
@@ -127,5 +148,6 @@ module.exports = {
     translate,
     summarize,
     cohereChat,
-    QA
+    QA,
+    getInsightsFromText
 }

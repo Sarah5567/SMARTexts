@@ -166,6 +166,26 @@ const question = async (req, res) =>{
         res.status(500).json({message: error.message})
     }
 }
+const generateInsights = async (req, res) => {
+    const { documentId } = req.body;
+
+    try {
+        const document = await Document.findById(documentId);
+        if (!document) {
+            return res.status(404).json({ message: 'Document not found' });
+        }
+
+        const insights = await getInsightsFromText(document.content);
+
+        // עדכון המסמך עם התובנות אם רוצים
+        document.summarize = insights;
+        await document.save();
+
+        res.status(200).json({ insights });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 module.exports = {
     deleteDocument,
@@ -176,5 +196,6 @@ module.exports = {
     deepSearch,
     translate,
     summarize,
-    question
+    question,
+    generateInsights
 }
