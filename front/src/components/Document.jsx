@@ -19,6 +19,29 @@ const TextEditor = () => {
     const [aiResponse, setAiResponse] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const handleTranslate = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/documents/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    text: text, // שולח את הטקסט מהעורך
+                    targetLanguage
+                })
+            });
+
+            const data = await response.json();
+            setAiResponse(data.translation); // נניח שהשרת מחזיר { translation: "..." }
+        } catch (error) {
+            console.error("Translation failed", error);
+        }
+        setLoading(false);
+    };
+
     const handleSave = () => {
         alert('File saved successfully!');
     };
