@@ -10,7 +10,7 @@ import {BrowserRouter} from "react-router-dom";
 import React from "react";
 import { Routes, Route } from 'react-router-dom';
 import { Suspense } from 'react';
-
+import TextEditor from './components/Document.jsx';
 
 const HomePage = React.lazy(() => import('./components/HomePage.jsx'));
 const Login = React.lazy(() => import('./components/Login/LoginPage.jsx'));
@@ -34,6 +34,7 @@ function App() {
                  <Route path='/AllDocuments' element={<Suspense fallback={'Loading...'}><AllDocuments /></Suspense>} />
                  <Route path='/Login' element={<Suspense fallback={'Loading...'}><Login /></Suspense>} />
              </Routes>
+             <TextEditor />
          </Provider>
     </BrowserRouter>
 
