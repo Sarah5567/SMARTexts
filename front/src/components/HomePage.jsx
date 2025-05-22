@@ -20,7 +20,7 @@ function HomePage() {
                             </p>
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                                 <Link
-                                    to="/your-target-route"
+                                    to="/Login"
                                     className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300 shadow-md flex items-center justify-center"
                                 >
                                     Get Started
