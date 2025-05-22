@@ -3,6 +3,7 @@ import {
     FileText, Shield, Zap, Search,
     Edit, Share2, Clock, Tag, Smartphone
 } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 function HomePage() {
     return (
@@ -18,9 +19,12 @@ function HomePage() {
                                 SMARText provides intelligent document management, allowing you to store, edit, and organize all your important text files in one secure place.
                             </p>
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                                <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300 shadow-md">
+                                <Link
+                                    to="/your-target-route"
+                                    className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300 shadow-md flex items-center justify-center"
+                                >
                                     Get Started
-                                </button>
+                                </Link>
                                 <button className="px-6 py-3 bg-white text-blue-600 font-medium rounded-md border border-blue-600 hover:bg-blue-50 transition duration-300">
                                     Learn More
                                 </button>

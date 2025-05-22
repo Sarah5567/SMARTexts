@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import {useDispatch} from "react-redux";
 import {setUser} from "../../store/userSlice.jsx";
+import {useNavigate} from "react-router-dom";
 
 export default function Signup() {
     const {
@@ -10,7 +11,7 @@ export default function Signup() {
         handleSubmit,
         formState: { errors }
     } = useForm();
-
+    const nevigate = useNavigate()
     const dispatch = useDispatch()
 
     const onSubmit = async (data) => {
@@ -33,6 +34,7 @@ export default function Signup() {
                 name: res.data.name,
                 email: res.data.email,
             }))
+            nevigate('/AllDocuments')
         }
         catch(err){
             console.log('something went wrong: ' + err.message)

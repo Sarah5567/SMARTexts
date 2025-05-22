@@ -17,7 +17,7 @@ import { Suspense } from 'react';
 const HomePage = React.lazy(() => import('./components/HomePage.jsx'));
 const Login = React.lazy(() => import('./components/Login/LoginPage.jsx'));
 const Register = React.lazy(() => import('./components/RegisterPage/RegisterPage.jsx'));
-const AllDocuments = React.lazy(() => import('./components/AllDocuments.jsx'));
+const AllDocuments = React.lazy(() => import('./components/AllDocument/AllDocuments.jsx'));
 
 const myStore = configureStore({
     reducer:{
