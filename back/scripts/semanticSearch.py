@@ -23,8 +23,6 @@
 # sorted_indices = np.argsort(similarity_scores)[::-1]
 # top_documents = [texts[i] for i in sorted_indices]
 # print(json.dumps(top_documents))
-
-
 import cohere
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -32,6 +30,10 @@ import sys
 import json
 from dotenv import load_dotenv
 import os
+
+def sanitize(text):
+    return text.encode('utf-8', 'surrogatepass').decode('utf-8', 'ignore')
+
 
 load_dotenv()
 
@@ -67,8 +69,8 @@ def main():
     # Load texts and query
     try:
         data = json.loads(sys.stdin.read())
-        texts = data['texts']
-        query = data['query']
+        texts = [sanitize(t) for t in data['texts']]
+        query = sanitize(data['query'])
     except (IndexError, json.JSONDecodeError):
         print("Usage: script.py '[\"text1\", \"text2\", ...]' \"query string\"")
         sys.exit(1)
