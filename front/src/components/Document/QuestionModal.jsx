@@ -1,7 +1,7 @@
 
 // QuestionModal.jsx
 import React from 'react';
-import Modal from './Modal';
+import Modal from './Modal.jsx';
 
 const QuestionModal = ({ isOpen, onClose, question, setQuestion, loading, onAskQuestion, aiResponse }) => {
     return (

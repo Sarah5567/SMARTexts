@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import AddNew from './AddNewDocument.jsx'
 import { FileText, File, Calendar, Eye, Search, Zap, Plus } from "lucide-react";
-
+import { Link } from "react-router-dom";
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
     const [documents, setDocuments] = useState([])
@@ -188,70 +188,69 @@ export default function DocumentsPage() {
                     </div>
                 </div>
 
-                {/* Documents Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {documents.map((doc) => (
+                        <Link to={`/Document/${doc._id}`} key={doc._id}>
                         <div
-                            key={doc._id}
-                            className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 relative cursor-pointer transform hover:-translate-y-1"
-                        >
-                            {/* Document Paper Effect */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-30"></div>
+                                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 relative cursor-pointer transform hover:-translate-y-1"
+                            >
+                                {/* Document Paper Effect */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-30"></div>
 
-                            {/* Paper corner fold effect */}
-                            <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-gray-200 to-transparent transform rotate-45 translate-x-3 -translate-y-3"></div>
+                                {/* Paper corner fold effect */}
+                                <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-gray-200 to-transparent transform rotate-45 translate-x-3 -translate-y-3"></div>
 
-                            <div className="relative p-6">
-                                {/* Document Icon and Header */}
-                                <div className="flex items-start justify-between mb-4">
-                                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                        <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
-                                            <File className="h-6 w-6 text-white" />
-                                        </div>
-
-                                        <div className="flex-1">
-                                            <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
-                                                {doc.title}
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Document Preview Lines */}
-                                <div className="mb-4 space-y-2">
-                                    <div className="h-2 bg-gray-200 rounded w-full opacity-40"></div>
-                                    <div className="h-2 bg-gray-200 rounded w-4/5 opacity-30"></div>
-                                    <div className="h-2 bg-gray-200 rounded w-3/5 opacity-20"></div>
-                                </div>
-
-                                {/* Document Footer */}
-                                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                                    <div className="flex flex-col text-sm text-gray-500">
-                                        <div className="flex items-center mb-1">
-                                            <Calendar className="h-4 w-4 mr-1" />
-                                            <span>Created: {new Date(doc.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Calendar className="h-4 w-4 mr-1" />
-                                            <span>Updated: {new Date(doc.updatedAt).toLocaleDateString()}</span>
+                                <div className="relative p-6">
+                                    {/* Document Icon and Header */}
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
+                                                <File className="h-6 w-6 text-white" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
+                                                    {doc.title}
+                                                </h2>
+                                            </div>
                                         </div>
                                     </div>
-                                    <button className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer">
-                                        <span className="ml-1 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">View</span>
-                                        <Eye className="h-4 w-4 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-                                    </button>
+
+                                    {/* Document Preview Lines */}
+                                    <div className="mb-4 space-y-2">
+                                        <div className="h-2 bg-gray-200 rounded w-full opacity-40"></div>
+                                        <div className="h-2 bg-gray-200 rounded w-4/5 opacity-30"></div>
+                                        <div className="h-2 bg-gray-200 rounded w-3/5 opacity-20"></div>
+                                    </div>
+
+                                    {/* Document Footer */}
+                                    <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                                        <div className="flex flex-col text-sm text-gray-500">
+                                            <div className="flex items-center mb-1">
+                                                <Calendar className="h-4 w-4 mr-1" />
+                                                <span>Created: {new Date(doc.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <Calendar className="h-4 w-4 mr-1" />
+                                                <span>Updated: {new Date(doc.updatedAt).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                        <span className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer">
+              <span className="ml-1 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">View</span>
+              <Eye className="h-4 w-4 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+            </span>
+                                    </div>
+
+                                    {/* Hover overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                                 </div>
 
-                                {/* Hover overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                                {/* Subtle shadow at bottom to enhance paper effect */}
+                                <div className="absolute bottom-0 left-2 right-2 h-1 bg-gray-300 opacity-20 rounded-full transform translate-y-1"></div>
                             </div>
-
-                            {/* Subtle shadow at bottom to enhance paper effect */}
-                            <div className="absolute bottom-0 left-2 right-2 h-1 bg-gray-300 opacity-20 rounded-full transform translate-y-1"></div>
-                        </div>
-
+                        </Link>
                     ))}
                 </div>
+
 
                 {/*/!* View More Button *!/*/}
                 {/*<div className="mt-8 text-center">*/}
@@ -260,6 +259,7 @@ export default function DocumentsPage() {
                 {/*    </button>*/}
                 {/*</div>*/}
             </div>
+
         </div>
     );
 }
