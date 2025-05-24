@@ -241,7 +241,6 @@ export default function DocumentsPage() {
                                         <Eye className="h-4 w-4 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
                                     </button>
                                 </div>
-
                                 {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             </div>
