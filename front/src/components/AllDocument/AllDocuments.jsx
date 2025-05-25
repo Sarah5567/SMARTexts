@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import AddNew from './AddNewDocument.jsx'
-import { FileText, File, Calendar, Eye, Search, Zap, Plus } from "lucide-react";
+import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2 } from "lucide-react";
 
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
@@ -76,6 +76,19 @@ export default function DocumentsPage() {
         }
         setLoading(false);
     }
+    const deleteDocument = async (docId) =>{
+        setLoading(true);
+        try {
+            await axios.delete(`http://localhost:8080/document/deleteDocument/${docId}`,
+            {withCredentials: true,})
+            console.log(`document ${docId} deleted`)
+            setTrigger(trigger+1)
+
+        } catch (err) {
+            console.error(`deleting ${docId} failed. error details:\n${err}`);
+        }
+        setLoading(false);
+    }
     // const getDocumentIcon = (title) => {
     //     const lowerTitle = title.toLowerCase();
     //     if (lowerTitle.includes('דוח') || lowerTitle.includes('report')) {
@@ -116,7 +129,7 @@ export default function DocumentsPage() {
                             </div>
                             <div className="text-center p-2 bg-white rounded-lg shadow-sm border border-gray-100">
                                 <p className="text-2xl font-bold text-purple-800">{countUpdated}</p>
-                                <p className="text-xs text-gray-500">Last updated</p>
+                                <p className="text-xs text-gray-500">Last edited</p>
                             </div>
                         </div>
                     </div>
@@ -197,9 +210,19 @@ export default function DocumentsPage() {
                         >
                             {/* Document Paper Effect */}
                             <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-30"></div>
-
                             {/* Paper corner fold effect */}
                             <div className="absolute top-0 right-0 w-6 h-6 bg-gradient-to-bl from-gray-200 to-transparent transform rotate-45 translate-x-3 -translate-y-3"></div>
+
+                            {/* Delete Button */}
+                            <button
+                                className="absolute top-4 right-4 z-10 h-7 w-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-all duration-200 cursor-pointer"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteDocument(doc._id)
+                                }}
+                            >
+                                <Trash2 className="h-3.5 w-3.5" />
+                            </button>
 
                             <div className="relative p-6">
                                 {/* Document Icon and Header */}
@@ -208,7 +231,6 @@ export default function DocumentsPage() {
                                         <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
                                             <File className="h-6 w-6 text-white" />
                                         </div>
-
                                         <div className="flex-1">
                                             <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
                                                 {doc.title}
@@ -216,14 +238,12 @@ export default function DocumentsPage() {
                                         </div>
                                     </div>
                                 </div>
-
                                 {/* Document Preview Lines */}
                                 <div className="mb-4 space-y-2">
                                     <div className="h-2 bg-gray-200 rounded w-full opacity-40"></div>
                                     <div className="h-2 bg-gray-200 rounded w-4/5 opacity-30"></div>
                                     <div className="h-2 bg-gray-200 rounded w-3/5 opacity-20"></div>
                                 </div>
-
                                 {/* Document Footer */}
                                 <div className="flex justify-between items-center pt-3 border-t border-gray-100">
                                     <div className="flex flex-col text-sm text-gray-500">
@@ -244,11 +264,9 @@ export default function DocumentsPage() {
                                 {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             </div>
-
                             {/* Subtle shadow at bottom to enhance paper effect */}
                             <div className="absolute bottom-0 left-2 right-2 h-1 bg-gray-300 opacity-20 rounded-full transform translate-y-1"></div>
                         </div>
-
                     ))}
                 </div>
 

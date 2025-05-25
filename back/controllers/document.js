@@ -89,7 +89,7 @@ const updateDocument = async (req, res) => {
 };
 const deleteDocument = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
 
         const user = await User.findById(req.userId).populate('documents');
 
