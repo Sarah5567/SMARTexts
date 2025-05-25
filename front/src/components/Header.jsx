@@ -1,21 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { User, Home, File, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
 function Header() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
     const userObj = useSelector((state) => state.userSlice);
+    const isLoggedIn = userObj.name && userObj.name !== "unknown";
 
-    const toggleLogin = () => {
-        if (isLoggedIn) {
-            setIsLoggedIn(false);
-            setUsername('');
-        } else {
-            setIsLoggedIn(true);
-            setUsername(userObj.name);
-        }
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // מחיקת הטוקן מה-localStorage
+        // אם יש לך פעולה ב-redux שמעדכנת את המשתמש, קראי לה כאן (למשל dispatch(logoutUser()))
+        window.location.href = '/Login'; // ניתוב לדף התחברות
     };
 
     return (
@@ -50,7 +45,6 @@ function Header() {
                             Home
                         </Link>
                     </div>
-
                     {/* Sign In / Register */}
                     {!isLoggedIn && (
                         <div className="flex items-center space-x-2 mr-6">
@@ -78,13 +72,22 @@ function Header() {
                         {isLoggedIn ? (
                             <>
                                 <div className="flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
-                                        <User className="w-4 h-4 text-white" />
+                                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                                        {(() => {
+                                            const words = userObj.name.trim().split(' ').filter(w => w);
+                                            if (words.length >= 2) {
+                                                return (words[0][0] + words[1][0]).toUpperCase();
+                                            }
+                                            return userObj.name[0]?.toUpperCase() || '';
+                                        })()}
                                     </div>
-                                    <span className="text-sm font-medium text-blue-800">{userObj.name}</span>
+                                    <span className="ml-2 text-sm font-medium text-blue-800">
+                                       {userObj.name}
+                                    </span>
                                 </div>
+
                                 <button
-                                    onClick={toggleLogin}
+                                    onClick={handleLogout}
                                     className="px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
                                 >
                                     <LogOut className="w-4 h-4 mr-1" />
@@ -93,17 +96,13 @@ function Header() {
                             </>
                         ) : (
                             <div className="flex items-center">
-                                {userObj.name=="unknown" ?(
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
                                     <User className="w-4 h-4 text-gray-500" />
-                                </div>):(
-                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-white font-bold">
-                                    {userObj.name ? userObj.name.charAt(0).toUpperCase() : ''}
-                                </div>)}
-
+                                </div>
                                 <span className="text-sm font-medium text-gray-600">{userObj.name}</span>
                             </div>
                         )}
+
                     </div>
                 </div>
             </div>
