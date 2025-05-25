@@ -94,12 +94,12 @@ function Header() {
                         ) : (
                             <div className="flex items-center">
                                 {userObj.name=="unknown" ?(
-                                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
-                                    <User className="w-4 h-4 text-gray-500" />
-                                </div>):(
-                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-white font-bold">
-                                    {userObj.name ? userObj.name.charAt(0).toUpperCase() : ''}
-                                </div>)}
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+                                        <User className="w-4 h-4 text-gray-500" />
+                                    </div>):(
+                                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-white font-bold">
+                                        {userObj.name ? userObj.name.charAt(0).toUpperCase() : ''}
+                                    </div>)}
 
                                 <span className="text-sm font-medium text-gray-600">{userObj.name}</span>
                             </div>

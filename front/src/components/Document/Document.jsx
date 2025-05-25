@@ -238,16 +238,6 @@ const Document = () => {
                     aiResponse={aiResponse}
                 />
 
-
-                {/*<QuestionModal*/}
-                {/*    isOpen={showQuestionModal}*/}
-                {/*    onClose={() => setShowQuestionModal(false)}*/}
-                {/*    question={question}*/}
-                {/*    setQuestion={setQuestion}*/}
-                {/*    loading={loading}*/}
-                {/*    onAskQuestion={() => simulateAIResponse('question', question)}*/}
-                {/*    aiResponse={aiResponse}*/}
-                {/*/>*/}
                 <QuestionModal
                     isOpen={showQuestionModal}
                     onClose={() => setShowQuestionModal(false)}
