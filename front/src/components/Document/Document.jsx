@@ -158,6 +158,26 @@ const Document = () => {
         }
     };
 
+    const handleInsights = async () => {
+        console.log('trying to generate insights...')
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/document/generateInsights',
+                { docId: id, },
+                { withCredentials: true }
+            );
+            debugger
+            console.log(`insights: ${response.data.insights}`)
+            setAiResponse(response.data.insights);
+        } catch (error) {
+            console.error('Question error:', error);
+            setAiResponse('An error occurred while getting the answer.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const simulateAIResponse = (type, input = '') => {
         setLoading(true);
@@ -320,7 +340,7 @@ const Document = () => {
                     isOpen={showInsightModal}
                     onClose={() => setShowInsightModal(false)}
                     loading={loading}
-                    onGenerateInsights={() => simulateAIResponse('insight')}
+                    onGenerateInsights={handleInsights}
                     aiResponse={aiResponse}
                 />
             </div>
