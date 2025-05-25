@@ -1,50 +1,136 @@
 
 // TextEditor.jsx - Main Component
-import React, { useState } from 'react';
 import { Save } from 'lucide-react';
-import TranslateModal from './TranslateModal';
-import QuestionModal from './QuestionModal';
-import SummaryModal from './SummaryModal';
-import InsightModal from './InsightModal';
-import AIToolsPanel from './AIToolsPanel';
+import TranslateModal from './TranslateModal.jsx';
+import QuestionModal from './QuestionModal.jsx';
+import SummaryModal from './SummaryModal.jsx';
+import InsightModal from './InsightModal.jsx';
+import AIToolsPanel from '../AIToolsPanel.jsx';
+import { useParams } from 'react-router-dom';
+import { useEffect,useState } from 'react';
+import axios from "axios";
 
-const TextEditor = () => {
+
+const Document = () => {
+    const { id } = useParams();
     const [text, setText] = useState('Start typing your text here...');
     const [showTranslateModal, setShowTranslateModal] = useState(false);
     const [showQuestionModal, setShowQuestionModal] = useState(false);
     const [showSummaryModal, setShowSummaryModal] = useState(false);
     const [showInsightModal, setShowInsightModal] = useState(false);
     const [question, setQuestion] = useState('');
-    const [targetLanguage, setTargetLanguage] = useState('en');
+    const [targetLanguage, setTargetLanguage] = useState('EN-US');
     const [aiResponse, setAiResponse] = useState('');
     const [loading, setLoading] = useState(false);
+    const [title, setTitle] = useState('');
+    const [summarize, setSummarize] = useState();
 
+
+    useEffect(() => {
+        const fetchDocument = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(
+                    `http://localhost:8080/document/getDocument`,
+                    {
+                        withCredentials: true,
+                        params: { id }
+                    }
+                );
+                setText(response.data.content);
+                setTitle(response.data.title)
+            } catch (err) {
+                console.error('Error fetching document:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchDocument();
+        }
+    }, [id]);
+
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/document/updateDocument',
+                {
+                    id,
+                    title,
+                    content: text,
+                },
+                { withCredentials: true }
+            );
+            setText(response.data.text.text);
+
+            alert('Changes saved successfully!');
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            alert('An error occurred while saving.');
+        }
+    };
     const handleTranslate = async () => {
         setLoading(true);
         try {
-            const response = await fetch('/api/documents/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    text: text, // שולח את הטקסט מהעורך
-                    targetLanguage
-                })
-            });
+            let langCode = targetLanguage.toUpperCase();
+            if (langCode.length === 2) {
+                if (langCode === 'EN') langCode = 'EN-US';
+            }
 
-            const data = await response.json();
-            setAiResponse(data.translation); // נניח שהשרת מחזיר { translation: "..." }
+            const response = await axios.post(
+                'http://localhost:8080/document/translate',
+                { text, language: langCode },
+                { withCredentials: true }
+            );
+           setAiResponse(response.data.text.text);
         } catch (error) {
-            console.error("Translation failed", error);
+            console.error('Translation error:', error);
+            setAiResponse('An error occurred while translating.');
         }
         setLoading(false);
     };
 
-    const handleSave = () => {
-        alert('File saved successfully!');
+    const handleSummarize = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/document/summarize',
+                { id },
+                { withCredentials: true }
+            );
+            setAiResponse(response.data);
+        } catch (error) {
+            console.error('Summarization error:', error);
+            setAiResponse('An error occurred while summarizing.');
+        } finally {
+            setLoading(false);
+        }
     };
+
+    const handleAskQuestion = async () => {
+        if (!question.trim()) return;
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/document/question',
+                {
+                    docId: id,
+                    question: question
+                },
+                { withCredentials: true }
+            );
+            setAiResponse(response.data);
+        } catch (error) {
+            console.error('Question error:', error);
+            setAiResponse('An error occurred while getting the answer.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const simulateAIResponse = (type, input = '') => {
         setLoading(true);
@@ -67,6 +153,8 @@ const TextEditor = () => {
         }, 1500);
     };
 
+
+
     const resetAIResponse = () => {
         setAiResponse('');
     };
@@ -77,7 +165,7 @@ const TextEditor = () => {
                 {/* Header */}
                 <div className="mb-8 text-center">
                     <h1 className="text-5xl font-light text-blue-900 mb-4">
-                        Advanced Text Editor
+                        {title ? title : 'Untitled Document'}
                     </h1>
                     <div className="h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 w-48 mx-auto rounded-full"></div>
                 </div>
@@ -139,34 +227,47 @@ const TextEditor = () => {
                     </div>
                 </div>
 
-                {/* Modals */}
+
                 <TranslateModal
                     isOpen={showTranslateModal}
                     onClose={() => setShowTranslateModal(false)}
                     targetLanguage={targetLanguage}
                     setTargetLanguage={setTargetLanguage}
                     loading={loading}
-                    onTranslate={() => simulateAIResponse('translate')}
+                    onTranslate={handleTranslate}
                     aiResponse={aiResponse}
                 />
 
+
+                {/*<QuestionModal*/}
+                {/*    isOpen={showQuestionModal}*/}
+                {/*    onClose={() => setShowQuestionModal(false)}*/}
+                {/*    question={question}*/}
+                {/*    setQuestion={setQuestion}*/}
+                {/*    loading={loading}*/}
+                {/*    onAskQuestion={() => simulateAIResponse('question', question)}*/}
+                {/*    aiResponse={aiResponse}*/}
+                {/*/>*/}
                 <QuestionModal
                     isOpen={showQuestionModal}
                     onClose={() => setShowQuestionModal(false)}
                     question={question}
                     setQuestion={setQuestion}
                     loading={loading}
-                    onAskQuestion={() => simulateAIResponse('question', question)}
+                    onAskQuestion={handleAskQuestion}  // ← כאן
                     aiResponse={aiResponse}
                 />
+
+
 
                 <SummaryModal
                     isOpen={showSummaryModal}
                     onClose={() => setShowSummaryModal(false)}
                     loading={loading}
-                    onSummarize={() => simulateAIResponse('summary')}
+                    onSummarize={handleSummarize}
                     aiResponse={aiResponse}
                 />
+
 
                 <InsightModal
                     isOpen={showInsightModal}
@@ -180,4 +281,4 @@ const TextEditor = () => {
     );
 };
 
-export default TextEditor;
+export default Document;

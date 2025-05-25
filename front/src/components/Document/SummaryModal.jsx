@@ -1,7 +1,7 @@
 
 // SummaryModal.jsx
 import React from 'react';
-import Modal from './Modal';
+import Modal from './Modal.jsx';
 
 const SummaryModal = ({ isOpen, onClose, loading, onSummarize, aiResponse }) => {
     return (

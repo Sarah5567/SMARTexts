@@ -168,7 +168,7 @@ const generateInsights = async (req, res) => {
             return res.status(404).json({ message: 'Document not found' });
         }
 
-        const insights = await getInsightsFromText(document.content);
+        const insights = await DocumentService.getInsightsFromText(document.content);
 
         // עדכון המסמך עם התובנות אם רוצים
         document.summarize = insights;

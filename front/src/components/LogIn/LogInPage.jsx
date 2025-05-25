@@ -13,6 +13,8 @@ export default function Main() {
 
     const onSubmit = async (data) => {
         try {
+            console.log('email: ' + data.email)
+            console.log('password: ' + data.password)
             const res = await axios.post('http://localhost:8080/auth/login',
                 {
                     email: data.email,
