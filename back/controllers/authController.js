@@ -63,10 +63,6 @@ const register = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
-const handleLogout = () => {
-    localStorage.removeItem('token'); // או כל שם ששמרת בו את הטוקן
-    // ניתוב לדף התחברות/ניקוי סטייט
-    window.location.href = '/login';
-};
 
-module.exports = { login, register , handleLogout };
+
+module.exports = { login, register };

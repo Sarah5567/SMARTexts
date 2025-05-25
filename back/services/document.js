@@ -118,7 +118,13 @@ async function QA(userId, docId, question){
     document = await getDocument(userId, docId)
     if (!document)
         throw new Error("document not found")
-    return cohereChat(question, document.content )
+    try {
+        return  cohereChat(question, document.content )
+    }
+    catch (error){
+        console.error("Error from Cohere API:", error.response?.data || error.message);
+        throw new Error(`Failed to fetch insights from Cohere.\nerror details: ${error.message}`);
+    }
 }
 async function cohereChat(message, document){
     const cohere = new CohereClientV2({
@@ -131,27 +137,19 @@ async function cohereChat(message, document){
         ],
         documents: [document]
     });
+    console.log(`response: ${response}`)
     return response.message.content[0].text
 }
-async function getInsightsFromText(text) {
-    const prompt = `Given the following passage, provide 2 very short key insights or conclusions:\n\n${text}`;
-
+async function getInsightsFromText(userId, docId) {
+    const document = await getDocument(userId, docId)
+    if (!document)
+        throw new Error("document not found")
+    const prompt = `Given the following passage, provide 2 very short key insights or conclusions:`;
     try {
-        const response = await axios.post('https://api.cohere.ai/v1/generate', {
-            model: 'command-r-plus',
-            prompt: prompt,
-            max_tokens: 200
-        }, {
-            headers: {
-                'Authorization': `Bearer ${process.env.COHERE_API_KEY_DASSI}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        return response.data.generations[0].text;
+        return cohereChat(prompt, document.content)
     } catch (error) {
         console.error("Error from Cohere API:", error.response?.data || error.message);
-        throw new Error('Failed to fetch insights from Cohere');
+        throw new Error(`Failed to fetch insights from Cohere.\nerror details: ${error.message}`);
     }
 }
 
