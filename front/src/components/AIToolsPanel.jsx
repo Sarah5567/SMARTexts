@@ -11,7 +11,7 @@ const AIToolsPanel = ({
                       }) => {
     return (
         <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-5">
+            <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-6 py-5">
                 <h2 className="text-lg font-medium text-white text-center">AI Tools</h2>
             </div>
 
