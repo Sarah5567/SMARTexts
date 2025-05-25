@@ -194,7 +194,6 @@ const Document = () => {
                     <h1 className="text-4xl font-light text-blue-900 mb-4">
                         Advanced Text Editor
                     </h1>
-                    <div className="h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 w-48 mx-auto rounded-full"></div>
                 </div>
 
                 {/* Main Content */}
@@ -202,7 +201,7 @@ const Document = () => {
                     {/* Text Editor - Main Content */}
                     <div className="flex-1">
                         <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 flex items-center justify-between">
+                            <div className="bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-6 flex items-center justify-between">
                                 {isEditing ? (
                                     <input
                                         type="text"
