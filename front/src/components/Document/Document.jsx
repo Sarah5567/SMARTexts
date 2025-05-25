@@ -23,7 +23,6 @@ const Document = () => {
     const [aiResponse, setAiResponse] = useState('');
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('');
-    const [summarize, setSummarize] = useState();
 
 
     useEffect(() => {
@@ -164,10 +163,9 @@ const Document = () => {
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {/* Header */}
                 <div className="mb-8 text-center">
-                    <h1 className="text-5xl font-light text-blue-900 mb-4">
+                    <h1 className="text-4xl font-light text-blue-900 mb-4">
                         {title ? title : 'Untitled Document'}
                     </h1>
-                    <div className="h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 w-48 mx-auto rounded-full"></div>
                 </div>
 
                 {/* Main Content */}
@@ -175,7 +173,7 @@ const Document = () => {
                     {/* Text Editor - Main Content */}
                     <div className="flex-1">
                         <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
+                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
                                 <h2 className="text-xl font-medium text-white">Document Editor</h2>
                             </div>
 
@@ -192,7 +190,7 @@ const Document = () => {
                                 <div className="flex justify-end">
                                     <button
                                         onClick={handleSave}
-                                        className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                        className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
                                     >
                                         <Save size={18} />
                                         Save Changes

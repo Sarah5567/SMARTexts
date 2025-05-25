@@ -14,7 +14,7 @@ const SummaryModal = ({ isOpen, onClose, loading, onSummarize, aiResponse }) => 
                 <button
                     onClick={onSummarize}
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-xl shadow-lg hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-xl shadow-lg hover:shadow-xl cursor-pointer"
                 >
                     {loading ? 'Creating summary...' : 'Summarize Text'}
                 </button>

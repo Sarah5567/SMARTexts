@@ -116,7 +116,9 @@ export default function DocumentsPage() {
 
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">My Documents</h1>
+                            <h1 className="text-4xl font-bold text-blue-600 mb-1">
+                                My Documents
+                            </h1>
                             <p className="text-gray-500">Organize and access your files intuitively</p>
                         </div>
                         <div className="flex gap-4 mt-4 md:mt-0">
@@ -227,16 +229,19 @@ export default function DocumentsPage() {
                                     {/* Document Icon and Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
-                                                <File className="h-6 w-6 text-white" />
-                                            </div>
-                                            <Link to={`/Document/${doc._id}`}>
-                                            <div className="flex-1">
-                                                <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
-                                                    {doc.title}
-                                                </h2>
-                                            </div>
+                                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                                <div className="h-12 w-12 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
+                                                    <File className="h-6 w-6 text-white" />
+                                                </div>
+                                                <Link to={`/Document/${doc._id}`}>
+                                                    <div className="flex-1">
+                                                        <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
+                                                            {doc.title}
+                                                        </h2>
+                                                    </div>
                                                 </Link>
+                                            </div>
+
                                         </div>
                                     </div>
 
