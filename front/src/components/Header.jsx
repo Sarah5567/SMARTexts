@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { User, Home, File, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSelector} from 'react-redux';
@@ -8,7 +8,18 @@ function Header() {
     const [username, setUsername] = useState('');
     const userObj = useSelector((state) => state.userSlice);
 
+    useEffect(() => {
+        if(userObj.name=="unknown"){
+            setUsername("unknown");
+        }
+        else{
+            setUsername(userObj.name);
+            toggleLogin();
+        }
+    },[userObj])
+
     const toggleLogin = () => {
+
         if (isLoggedIn) {
             setIsLoggedIn(false);
             setUsername('');
@@ -23,6 +34,8 @@ function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16">
                     {/* Logo */}
+                    <Link
+                        to="/">
                     <div className="flex items-center mr-6">
                         <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-2">
                             <span className="text-white font-bold text-lg">S</span>
@@ -32,6 +45,7 @@ function Header() {
                             <span className="text-blue-500">ext</span>
                         </span>
                     </div>
+                    </Link>
 
                     {/* Navigation Links */}
                     <div className="flex items-center space-x-4 mr-6">
@@ -78,10 +92,19 @@ function Header() {
                         {isLoggedIn ? (
                             <>
                                 <div className="flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2">
-                                        <User className="w-4 h-4 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium text-blue-800">{userObj.name}</span>
+                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-white font-bold">
+                                    {(() => {
+                                        const words = userObj.name
+                                            .trim()
+                                            .split(' ')
+                                            .filter(w => w); // מסנן מילים ריקות
+                                        if (words.length >= 2) {
+                                            return (words[0][0] + words[1][0]).toUpperCase();
+                                        }
+                                        return userObj.name[0]?.toUpperCase() || '';
+                                    })()}
+                                </div>
+                                 <span className="text-sm font-medium text-blue-800">{userObj.name}</span>
                                 </div>
                                 <button
                                     onClick={toggleLogin}
@@ -93,14 +116,9 @@ function Header() {
                             </>
                         ) : (
                             <div className="flex items-center">
-                                {userObj.name=="unknown" ?(
                                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
                                         <User className="w-4 h-4 text-gray-500" />
-                                    </div>):(
-                                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-white font-bold">
-                                        {userObj.name ? userObj.name.charAt(0).toUpperCase() : ''}
-                                    </div>)}
-
+                                    </div>
                                 <span className="text-sm font-medium text-gray-600">{userObj.name}</span>
                             </div>
                         )}

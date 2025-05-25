@@ -1,6 +1,6 @@
 
 // TextEditor.jsx - Main Component
-import { Save } from 'lucide-react';
+import { Save,Edit2 } from 'lucide-react';
 import TranslateModal from './TranslateModal.jsx';
 import QuestionModal from './QuestionModal.jsx';
 import SummaryModal from './SummaryModal.jsx';
@@ -23,6 +23,13 @@ const Document = () => {
     const [aiResponse, setAiResponse] = useState('');
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        if (!isEditing && id && title && text) {
+            handleSaveTitle();
+        }
+    }, [isEditing]);
 
 
     useEffect(() => {
@@ -63,7 +70,28 @@ const Document = () => {
                 },
                 { withCredentials: true }
             );
+            setTitle(response.data.title);
             setText(response.data.text.text);
+
+            alert('Changes saved successfully!');
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            alert('An error occurred while saving.');
+        }
+    };
+    const handleSaveTitle = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.post(
+                'http://localhost:8080/document/updateDocument',
+                {
+                    id,
+                    title,
+                    content: text,
+                },
+                { withCredentials: true }
+            );
+            setTitle(response.data.title);
 
             alert('Changes saved successfully!');
         } catch (error) {
@@ -164,8 +192,9 @@ const Document = () => {
                 {/* Header */}
                 <div className="mb-8 text-center">
                     <h1 className="text-4xl font-light text-blue-900 mb-4">
-                        {title ? title : 'Untitled Document'}
+                        Advanced Text Editor
                     </h1>
+                    <div className="h-1 bg-gradient-to-r from-blue-200 via-blue-400 to-blue-200 w-48 mx-auto rounded-full"></div>
                 </div>
 
                 {/* Main Content */}
@@ -173,11 +202,41 @@ const Document = () => {
                     {/* Text Editor - Main Content */}
                     <div className="flex-1">
                         <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
-                                <h2 className="text-xl font-medium text-white">Document Editor</h2>
+                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 flex items-center justify-between">
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        autoFocus
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        onBlur={() => setIsEditing(false)}  // סיום עריכה כשהמשתמש יוצא מהשדה
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                setIsEditing(false);  // סיום עריכה בלחיצת Enter
+                                            }
+                                        }}
+                                        className="text-xl font-medium rounded px-2 py-1"
+                                    />
+                                ) : (
+                                    <h2 className="text-xl font-medium text-white">
+                                        {title ? title : 'Untitled Document'}
+                                    </h2>
+                                )}
+
+                                {!isEditing && (
+                                    <button
+                                        onClick={() => setIsEditing(true)}
+                                        className="p-2 rounded hover:bg-blue-100 transition-colors cursor-pointer"
+                                        title="Edit Title"
+                                    >
+                                        <Edit2 size={20} color="#fff" />
+                                    </button>
+                                )}
                             </div>
 
                             <div className="p-8">
+
+
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
