@@ -1,11 +1,37 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     FileText, Shield, Zap, Search,
     Edit, Share2, Clock, Tag, Smartphone
 } from 'lucide-react';
 import { Link } from "react-router-dom";
+import { useSelector} from 'react-redux';
+
 
 function HomePage() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('');
+    const userObj = useSelector((state) => state.userSlice);
+
+    useEffect(() => {
+        if(userObj.name=="unknown"){
+            setUsername("unknown");
+        }
+        else{
+            setUsername(userObj.name);
+            toggleLogin();
+        }
+    },[userObj])
+
+    const toggleLogin = () => {
+
+        if (isLoggedIn) {
+            setIsLoggedIn(false);
+            setUsername('');
+        } else {
+            setIsLoggedIn(true);
+            setUsername(userObj.name);
+        }
+    };
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
             <section className="bg-white">
@@ -19,13 +45,22 @@ function HomePage() {
                                 SMARText provides intelligent document management, allowing you to store, edit, and organize all your important text files in one secure place.
                             </p>
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                                <Link
+                                {!isLoggedIn?(<Link
                                     to="/Login"
                                     className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300 shadow-md flex items-center justify-center"
                                 >
                                     Get Started
-                                </Link>
-                                <button className="px-6 py-3 bg-white text-blue-600 font-medium rounded-md border border-blue-600 hover:bg-blue-50 transition duration-300">
+                                </Link>):(
+                                    <Link to="/AllDocuments"
+                                          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-300 shadow-md flex items-center justify-center"
+                                        >
+                                            Get Started
+                                        </Link>)}
+
+                                <button className="px-6 py-3 bg-white text-blue-600 font-medium rounded-md border border-blue-600 hover:bg-blue-50 transition duration-300"
+                                        onClick={() => {
+                                            document.getElementById('LearnMore').scrollIntoView({ behavior: 'smooth' });
+                                        }}>
                                     Learn More
                                 </button>
                             </div>
@@ -60,7 +95,7 @@ function HomePage() {
             <section className="py-16 bg-white border-t border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-blue-900 mb-4">
+                        <h2 id={"LearnMore"} className="text-3xl font-bold text-blue-900 mb-4">
                             Powerful Features for Your Text Management
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -278,9 +313,18 @@ function HomePage() {
                     <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
                         Join thousands of satisfied users who have transformed their document management process.
                     </p>
+                    {!isLoggedIn ? (
+                    <Link to={'./Register'}>
                     <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg">
                         Sign Up For Free
                     </button>
+                    </Link>):(
+                        <Link to={'./AllDocuments'}>
+                            <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg">
+                                    Sign Up For Free
+                                </button>
+                        </Link>)}
+
                     <p className="mt-4 text-blue-200">
                         No credit card required. Free plan available with premium upgrades.
                     </p>
