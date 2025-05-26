@@ -1,4 +1,3 @@
-
 // TextEditor.jsx - Main Component
 import { Save, Edit2 } from 'lucide-react';
 import TranslateModal from './TranslateModal.jsx';
@@ -37,26 +36,26 @@ const Document = () => {
     const [isSaving, setIsSaving] = React.useState(false);
 
 
-const saveTranslatedDocument = async (name, content) => {
-    setIsSaving(true);
-    try {
-         await axios.post('http://localhost:8080/document/createDocument', {
+    const saveTranslatedDocument = async (name, content) => {
+        setIsSaving(true);
+        try {
+            await axios.post('http://localhost:8080/document/createDocument', {
                 title: name,
                 content: content
             }, {
                 withCredentials: true
-});
+            });
 
-        setDocName(name);
-        setTranslatedText(content);
-        showSuccess('Document Saved', 'The translated document has been saved successfully.');
+            setDocName(name);
+            setTranslatedText(content);
+            showSuccess('Document Saved', 'The translated document has been saved successfully.');
         } catch (error) {
-        console.error('Error saving document:', error);
-        showError('Save Error', 'An error occurred while saving the translated document.');
-    } finally {
-        setIsSaving(false);
-    }
-};
+            console.error('Error saving document:', error);
+            showError('Save Error', 'An error occurred while saving the translated document.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
 
     useEffect(() => {
@@ -154,7 +153,7 @@ const saveTranslatedDocument = async (name, content) => {
             );
 
             setAiResponse(response.data.text.text);
-            setTranslatedText(response.data.text.text);  
+            setTranslatedText(response.data.text.text);
         } catch (error) {
             console.error('Translation error:', error);
             showError('Translation Failed', 'An error occurred while translating the document.');
@@ -384,7 +383,7 @@ const saveTranslatedDocument = async (name, content) => {
                     loading={loading}
                     onTranslate={handleTranslate}
                     aiResponse={aiResponse}
-                    onSaveDocument={saveTranslatedDocument}  
+                    onSaveDocument={saveTranslatedDocument}
                 /> */}
                 <TranslateModal
                     isOpen={showTranslateModal}
