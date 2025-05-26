@@ -68,13 +68,13 @@ const DocumentEditor = ({ value, onChange, placeholder }) => {
 
             {/* Navigator */}
             <div className="flex items-center justify-center gap-4 bg-white p-3 rounded-lg">
-                <button onClick={goToPrevPage} disabled={currentPage === 1} className="text-blue-600">
+                <button onClick={goToPrevPage} disabled={currentPage === 1} className="text-blue-600 cursor-pointer">
                     <ChevronLeft size={20} />
                 </button>
                 <div className="text-sm font-medium text-gray-700">
                     Page {currentPage} of {pages.length}
                 </div>
-                <button onClick={goToNextPage} disabled={currentPage === pages.length} className="text-blue-600">
+                <button onClick={goToNextPage} disabled={currentPage === pages.length} className="text-blue-600 cursor-pointer">
                     <ChevronRight size={20} />
                 </button>
             </div>
