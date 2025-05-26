@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import AddNew from './AddNewDocument.jsx'
 import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2 } from "lucide-react";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
@@ -13,6 +14,7 @@ export default function DocumentsPage() {
     const [numDocuments, setNumDocument] = useState(0)
     const [countUpdated, setCountUpdated] = useState(0)
     const [countCreated, setCountCreated] = useState(0)
+    const { showSuccess, showError } = useAlert();
 
     useEffect(() => {
         const getDocuments = async () => {
@@ -38,6 +40,7 @@ export default function DocumentsPage() {
                 }).length);
             } catch (err) {
                 console.error(err);
+                showError('Load failed', 'Failed to load documents from server.');
             }
             finally {
                 setLoading(false);
@@ -83,10 +86,11 @@ export default function DocumentsPage() {
             await axios.delete(`http://localhost:8080/document/deleteDocument/${docId}`,
             {withCredentials: true,})
             console.log(`document ${docId} deleted`)
+            showSuccess('Document deleted', 'The document was deleted successfully.');
             setTrigger(trigger+1)
-
         } catch (err) {
             console.error(`deleting ${docId} failed. error details:\n${err}`);
+            showError('Delete failed', 'Failed to delete the document.');
         }
         setLoading(false);
     }
@@ -99,7 +103,7 @@ export default function DocumentsPage() {
     // };
 
     return (
-        <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center p-6 overflow-auto">
+        <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center overflow-auto pt-20">
             {isOpen && <AddNew setIsOpen = {setIsOpen} renderDocuments = {()=>setTrigger(trigger + 1)}/>}
             {loading && (
                 <div className="fixed inset-0 flex justify-center items-center z-40 pointer-events-none">

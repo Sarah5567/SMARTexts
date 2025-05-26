@@ -4,8 +4,11 @@ import axios from "axios";
 import {useDispatch} from "react-redux";
 import {setUser} from "../../store/userSlice.jsx";
 import {useNavigate} from "react-router-dom";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 export default function Signup() {
+    const { showError } = useAlert();
+
     const {
         register,
         handleSubmit,
@@ -38,6 +41,7 @@ export default function Signup() {
         }
         catch(err){
             console.log('something went wrong: ' + err.message)
+            showError('Registration Failed', 'An error occurred during registration.');
         }
     };
 

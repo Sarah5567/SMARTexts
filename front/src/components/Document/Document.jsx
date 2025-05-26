@@ -7,13 +7,14 @@ import SummaryModal from './SummaryModal.jsx';
 import InsightModal from './InsightModal.jsx';
 import AIToolsPanel from '../AIToolsPanel.jsx';
 import { useParams } from 'react-router-dom';
-import { useEffect,useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import axios from "axios";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 
 const Document = () => {
     const { id } = useParams();
-    const [text, setText] = useState('Start typing your text here...');
+    const [text, setText] = useState('');
     const [showTranslateModal, setShowTranslateModal] = useState(false);
     const [showQuestionModal, setShowQuestionModal] = useState(false);
     const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -24,6 +25,7 @@ const Document = () => {
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const { showSuccess, showError } = useAlert();
 
     useEffect(() => {
         if (!isEditing && id && title && text) {
@@ -47,6 +49,7 @@ const Document = () => {
                 setTitle(response.data.title)
             } catch (err) {
                 console.error('Error fetching document:', err);
+                showError('Document Load Failed', 'Unable to open the document. Please try again')
             } finally {
                 setLoading(false);
             }
@@ -71,12 +74,15 @@ const Document = () => {
                 { withCredentials: true }
             );
             setTitle(response.data.title);
-            setText(response.data.text.text);
+            setText(response.data.content);
 
-            alert('Changes saved successfully!');
+            showSuccess('Changes Saved', 'Your changes have been saved successfully.');
         } catch (error) {
             console.error('Error saving changes:', error);
-            alert('An error occurred while saving.');
+            showError('Document Save Error', 'An error occurred while saving the document.');
+        }
+        finally {
+            setLoading(false)
         }
     };
     const handleSaveTitle = async () => {
@@ -93,10 +99,10 @@ const Document = () => {
             );
             setTitle(response.data.title);
 
-            alert('Changes saved successfully!');
+            showSuccess('Document saved', 'The document name was saved successfully.');
         } catch (error) {
             console.error('Error saving changes:', error);
-            alert('An error occurred while saving.');
+            showError('Save failed', 'Failed to save the document name.');
         }
     };
     const handleTranslate = async () => {
@@ -115,7 +121,7 @@ const Document = () => {
            setAiResponse(response.data.text.text);
         } catch (error) {
             console.error('Translation error:', error);
-            setAiResponse('An error occurred while translating.');
+            showError('Translation Failed', 'An error occurred while translating the document.');
         }
         setLoading(false);
     };
@@ -131,7 +137,7 @@ const Document = () => {
             setAiResponse(response.data);
         } catch (error) {
             console.error('Summarization error:', error);
-            setAiResponse('An error occurred while summarizing.');
+            showError('Summarization Failed', 'An error occurred while summarizing the document.');
         } finally {
             setLoading(false);
         }
@@ -152,7 +158,7 @@ const Document = () => {
             setAiResponse(response.data);
         } catch (error) {
             console.error('Question error:', error);
-            setAiResponse('An error occurred while getting the answer.');
+            showError('Answer Failed', 'Could not generate an answer to the question.');
         } finally {
             setLoading(false);
         }
@@ -167,12 +173,10 @@ const Document = () => {
                 { docId: id, },
                 { withCredentials: true }
             );
-            debugger
-            console.log(`insights: ${response.data.insights}`)
             setAiResponse(response.data.insights);
         } catch (error) {
             console.error('Question error:', error);
-            setAiResponse('An error occurred while getting the answer.');
+            showError('Conclusion Failed', 'Could not generate a valid insights.');
         } finally {
             setLoading(false);
         }
@@ -207,7 +211,12 @@ const Document = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white pt-16">
+            {loading && (
+                <div className="fixed inset-0 flex justify-center items-center z-40 pointer-events-none">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {/* Header */}
                 <div className="mb-8 text-center">

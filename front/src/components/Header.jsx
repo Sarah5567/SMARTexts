@@ -30,7 +30,7 @@ function Header() {
     };
 
     return (
-        <header className="bg-[#f4f4f4] text-blue-900 shadow-md">
+        <header className="bg-[#f4f4f4]/50 backdrop-blur-md text-blue-900 shadow-md fixed top-0 w-full z-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16">
                     {/* Logo */}
@@ -49,13 +49,13 @@ function Header() {
 
                     {/* Navigation Links */}
                     <div className="flex items-center space-x-4 mr-6">
-                        <Link
+                        {isLoggedIn && <Link
                             to="/AllDocuments"
                             className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50"
                         >
                             <File className="w-4 h-4 mr-1" />
                             Documents
-                        </Link>
+                        </Link>}
                         <Link
                             to="/"
                             className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-blue-800 hover:bg-blue-50"

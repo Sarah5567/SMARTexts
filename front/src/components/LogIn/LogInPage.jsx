@@ -4,12 +4,15 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux'
 import {setUser} from '../../store/userSlice.jsx'
 import {useNavigate} from "react-router-dom";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 
 export default function Main() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const dispatch = useDispatch()
     const nevigate = useNavigate()
+    const { showError } = useAlert();
+
 
     const onSubmit = async (data) => {
         try {
@@ -37,6 +40,7 @@ export default function Main() {
         }
         catch(err){
             console.log('something went wrong: ' + err.message)
+            showError('Login Failed', 'Unable to log in. Please check your credentials.');
         }
     };
 

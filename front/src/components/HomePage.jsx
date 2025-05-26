@@ -33,7 +33,7 @@ function HomePage() {
         }
     };
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50">
+        <div className="flex flex-col min-h-screen bg-gray-50 mt-20">
             <section className="bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
                     <div className="flex flex-col md:flex-row items-center">
@@ -315,12 +315,12 @@ function HomePage() {
                     </p>
                     {!isLoggedIn ? (
                     <Link to={'./Register'}>
-                    <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg">
+                    <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg cursor-pointer">
                         Sign Up For Free
                     </button>
                     </Link>):(
                         <Link to={'./AllDocuments'}>
-                            <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg">
+                            <button className="px-8 py-4 bg-white text-blue-900 font-bold rounded-md hover:bg-blue-50 transition duration-300 shadow-lg cursor-pointer">
                                     Sign Up For Free
                                 </button>
                         </Link>)}
