@@ -1,15 +1,19 @@
 
 // TextEditor.jsx - Main Component
-import { Save,Edit2 } from 'lucide-react';
+import { Save, Edit2 } from 'lucide-react';
 import TranslateModal from './TranslateModal.jsx';
 import QuestionModal from './QuestionModal.jsx';
 import SummaryModal from './SummaryModal.jsx';
 import InsightModal from './InsightModal.jsx';
 import AIToolsPanel from '../AIToolsPanel.jsx';
 import { useParams } from 'react-router-dom';
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import {useAlert} from "../../context/alerts/useAlert.jsx";
+import { useAlert } from "../../context/alerts/useAlert.jsx";
+import { Download } from 'lucide-react';
+import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
+
+
 
 
 const Document = () => {
@@ -26,6 +30,9 @@ const Document = () => {
     const [title, setTitle] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const { showSuccess, showError } = useAlert();
+    const [document, setDocument] = useState(null)
+    const downloadDocument = useDownloadDocument([document], showError);
+
 
     useEffect(() => {
         if (!isEditing && id && title && text) {
@@ -47,6 +54,7 @@ const Document = () => {
                 );
                 setText(response.data.content);
                 setTitle(response.data.title)
+                setDocument(response.data);
             } catch (err) {
                 console.error('Error fetching document:', err);
                 showError('Document Load Failed', 'Unable to open the document. Please try again')
@@ -120,7 +128,7 @@ const Document = () => {
                 { text, language: langCode },
                 { withCredentials: true }
             );
-           setAiResponse(response.data.text.text);
+            setAiResponse(response.data.text.text);
         } catch (error) {
             console.error('Translation error:', error);
             showError('Translation Failed', 'An error occurred while translating the document.');
@@ -188,7 +196,7 @@ const Document = () => {
     const simulateAIResponse = (type, input = '') => {
         setLoading(true);
         setTimeout(() => {
-            switch(type) {
+            switch (type) {
                 case 'translate':
                     setAiResponse(`Translation to ${targetLanguage}: \n${text.substring(0, 100)}...`);
                     break;
@@ -267,22 +275,29 @@ const Document = () => {
                             <div className="p-8">
 
 
-                <textarea
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="w-full h-96 p-6 border-2 border-blue-100 bg-blue-50 bg-opacity-30 text-blue-900 rounded-xl text-base leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all"
-                    placeholder="Start typing your text here..."
-                />
+                                <textarea
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    className="w-full h-96 p-6 border-2 border-blue-100 bg-blue-50 bg-opacity-30 text-blue-900 rounded-xl text-base leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all"
+                                    placeholder="Start typing your text here..."
+                                />
                             </div>
-
                             <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-8 py-6 border-t border-blue-100">
-                                <div className="flex justify-end">
+                                <div className="flex justify-end gap-4">
                                     <button
                                         onClick={handleSave}
                                         className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
                                     >
                                         <Save size={18} />
                                         Save Changes
+                                    </button>
+
+                                    <button
+                                        onClick={() => downloadDocument(document._id)}
+                                        className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
+                                    >
+                                        <Download size={18} />
+                                        Download
                                     </button>
                                 </div>
                             </div>

@@ -2,8 +2,9 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import AddNew from './AddNewDocument.jsx'
-import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2 } from "lucide-react";
+import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2, Download } from "lucide-react";
 import {useAlert} from "../../context/alerts/useAlert.jsx";
+import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
 
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
@@ -15,6 +16,8 @@ export default function DocumentsPage() {
     const [countUpdated, setCountUpdated] = useState(0)
     const [countCreated, setCountCreated] = useState(0)
     const { showSuccess, showError } = useAlert();
+
+    const downloadDocument = useDownloadDocument(documents, showError);
 
     useEffect(() => {
         const getDocuments = async () => {
@@ -94,14 +97,6 @@ export default function DocumentsPage() {
         }
         setLoading(false);
     }
-    // const getDocumentIcon = (title) => {
-    //     const lowerTitle = title.toLowerCase();
-    //     if (lowerTitle.includes('דוח') || lowerTitle.includes('report')) {
-    //         return <FileText className="h-12 w-12 text-blue-500" />;
-    //     }
-    //     return <File className="h-12 w-12 text-gray-500" />;
-    // };
-
     return (
         <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center overflow-auto pt-20">
             {isOpen && <AddNew setIsOpen = {setIsOpen} renderDocuments = {()=>setTrigger(trigger + 1)}/>}
@@ -268,6 +263,13 @@ export default function DocumentsPage() {
                                                 <span>Updated: {new Date(doc.updatedAt).toLocaleDateString()}</span>
                                             </div>
                                         </div>
+                                        <button className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer" onClick={() => downloadDocument(doc._id)}>
+                                     {/* <span className="mr-2 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+                                           Download
+                                        </span> */}
+                                    <Download className="ml-22 h-5 w-5 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                                        </button>
+
                                         <Link to={`/Document/${doc._id}`}>
                                         <button className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer">
                                         <span className="ml-1 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
@@ -277,6 +279,7 @@ export default function DocumentsPage() {
                                         </button>
                                         </Link>
                                     </div>
+                                       
 
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -287,15 +290,6 @@ export default function DocumentsPage() {
                             </div>
                     ))}
                 </div>
-
-
-
-                {/*/!* View More Button *!/*/}
-                {/*<div className="mt-8 text-center">*/}
-                {/*    <button className="px-8 py-2 border border-gray-300 rounded-full bg-white shadow-sm text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition">*/}
-                {/*        View More Documents*/}
-                {/*    </button>*/}
-                {/*</div>*/}
             </div>
         </div>
     );
