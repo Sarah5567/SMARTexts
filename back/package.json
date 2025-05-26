@@ -17,9 +17,11 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "deepl-node": "^1.17.3",
+    "docx": "^9.5.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "pdfkit": "^0.17.1"
   }
 }

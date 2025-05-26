@@ -1,6 +1,11 @@
 const DocumentService = require('../services/document')
-const Document = require('../models/document')
+const DocumentModel = require('../models/document')
 const User = require("../models/user");
+const path = require('path');
+const PDFDocument = require('pdfkit'); // אם תבחרי PDF
+const { Document, Packer, Paragraph } = require('docx'); // אם תבחרי DOCX
+const stream = require('stream');
+
 
 async function getDocument(req, res) {
     const userId = req.userId
@@ -105,7 +110,7 @@ const deleteDocument = async (req, res) => {
 
         await user.save();
 
-        await Document.findByIdAndDelete(id);
+        await DocumentModel.findByIdAndDelete(id);
         res.status(200).json({ message: 'Document deleted successfully' });
     } catch (err) {
         console.error("Error:", err);
@@ -163,7 +168,7 @@ const generateInsights = async (req, res) => {
     const { documentId } = req.body;
 
     try {
-        const document = await Document.findById(documentId);
+        const document = await DocumentModel.findById(documentId);
         if (!document) {
             return res.status(404).json({ message: 'Document not found' });
         }

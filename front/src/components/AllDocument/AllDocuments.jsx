@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import AddNew from './AddNewDocument.jsx'
-import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2 } from "lucide-react";
+import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2, Download } from "lucide-react";
+// import DownloadModal from "./DownloadModal.jsx";
 
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
@@ -13,6 +14,44 @@ export default function DocumentsPage() {
     const [numDocuments, setNumDocument] = useState(0)
     const [countUpdated, setCountUpdated] = useState(0)
     const [countCreated, setCountCreated] = useState(0)
+
+   const downloadFile = async (id, fileName = 'document.txt') => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`http://localhost:8080/document/download/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) throw new Error('Download failed');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+
+        // נסה לשלוף שם קובץ מה־headers (Content-Disposition) אם אפשר
+        const disposition = response.headers.get('Content-Disposition');
+        if (disposition && disposition.includes('filename=')) {
+            const match = disposition.match(/filename="?(.+?)"?$/);
+            if (match?.[1]) {
+                fileName = match[1];
+            }
+        }
+
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error("Download failed:", err);
+    }
+};
+
 
     useEffect(() => {
         const getDocuments = async () => {
@@ -90,14 +129,6 @@ export default function DocumentsPage() {
         }
         setLoading(false);
     }
-    // const getDocumentIcon = (title) => {
-    //     const lowerTitle = title.toLowerCase();
-    //     if (lowerTitle.includes('דוח') || lowerTitle.includes('report')) {
-    //         return <FileText className="h-12 w-12 text-blue-500" />;
-    //     }
-    //     return <File className="h-12 w-12 text-gray-500" />;
-    // };
-
     return (
         <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center p-6 overflow-auto">
             {isOpen && <AddNew setIsOpen = {setIsOpen} renderDocuments = {()=>setTrigger(trigger + 1)}/>}
@@ -267,6 +298,17 @@ export default function DocumentsPage() {
                                             <Eye className="h-4 w-4 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
                                         </button>
                                         </Link>
+                                        <button
+                                            className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                downloadFile(doc._id);
+                                                <DownloadModal/>
+                                            }}
+                                        >
+                                            <Download className="h-4 w-4 mr-1" />
+                                            Download
+                                        </button>
                                     </div>
 
                                     {/* Hover overlay */}
@@ -278,15 +320,6 @@ export default function DocumentsPage() {
                             </div>
                     ))}
                 </div>
-
-
-
-                {/*/!* View More Button *!/*/}
-                {/*<div className="mt-8 text-center">*/}
-                {/*    <button className="px-8 py-2 border border-gray-300 rounded-full bg-white shadow-sm text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition">*/}
-                {/*        View More Documents*/}
-                {/*    </button>*/}
-                {/*</div>*/}
             </div>
         </div>
     );
