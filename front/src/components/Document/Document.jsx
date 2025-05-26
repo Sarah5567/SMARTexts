@@ -32,6 +32,31 @@ const Document = () => {
     const { showSuccess, showError } = useAlert();
     const [document, setDocument] = useState(null)
     const downloadDocument = useDownloadDocument([document], showError);
+    const [translatedText, setTranslatedText] = React.useState('');
+    const [docName, setDocName] = React.useState('');
+    const [isSaving, setIsSaving] = React.useState(false);
+
+
+const saveTranslatedDocument = async (name, content) => {
+    setIsSaving(true);
+    try {
+         await axios.post('http://localhost:8080/document/createDocument', {
+                title: name,
+                content: content
+            }, {
+                withCredentials: true
+});
+
+        setDocName(name);
+        setTranslatedText(content);
+        showSuccess('Document Saved', 'The translated document has been saved successfully.');
+        } catch (error) {
+        console.error('Error saving document:', error);
+        showError('Save Error', 'An error occurred while saving the translated document.');
+    } finally {
+        setIsSaving(false);
+    }
+};
 
 
     useEffect(() => {
@@ -83,7 +108,6 @@ const Document = () => {
             );
             setTitle(response.data.title);
             setText(response.data.content);
-
             showSuccess('Changes Saved', 'Your changes have been saved successfully.');
         } catch (error) {
             console.error('Error saving changes:', error);
@@ -128,13 +152,36 @@ const Document = () => {
                 { text, language: langCode },
                 { withCredentials: true }
             );
+
             setAiResponse(response.data.text.text);
+            setTranslatedText(response.data.text.text);  
         } catch (error) {
             console.error('Translation error:', error);
             showError('Translation Failed', 'An error occurred while translating the document.');
         }
         setLoading(false);
     };
+
+    // const handleTranslate = async () => {
+    //     setLoading(true);
+    //     try {
+    //         let langCode = targetLanguage.toUpperCase();
+    //         if (langCode.length === 2) {
+    //             if (langCode === 'EN') langCode = 'EN-US';
+    //         }
+
+    //         const response = await axios.post(
+    //             'http://localhost:8080/document/translate',
+    //             { text, language: langCode },
+    //             { withCredentials: true }
+    //         );
+    //         setAiResponse(response.data.text.text);
+    //     } catch (error) {
+    //         console.error('Translation error:', error);
+    //         showError('Translation Failed', 'An error occurred while translating the document.');
+    //     }
+    //     setLoading(false);
+    // };
 
     const handleSummarize = async () => {
         setLoading(true);
@@ -291,7 +338,6 @@ const Document = () => {
                                         <Save size={18} />
                                         Save Changes
                                     </button>
-
                                     <button
                                         onClick={() => downloadDocument(document._id)}
                                         className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
@@ -330,6 +376,16 @@ const Document = () => {
                 </div>
 
 
+                {/* <TranslateModal
+                    isOpen={isTranslateOpen}
+                    onClose={() => setIsTranslateOpen(false)}
+                    targetLanguage={targetLanguage}
+                    setTargetLanguage={setTargetLanguage}
+                    loading={loading}
+                    onTranslate={handleTranslate}
+                    aiResponse={aiResponse}
+                    onSaveDocument={saveTranslatedDocument}  
+                /> */}
                 <TranslateModal
                     isOpen={showTranslateModal}
                     onClose={() => setShowTranslateModal(false)}
@@ -338,7 +394,11 @@ const Document = () => {
                     loading={loading}
                     onTranslate={handleTranslate}
                     aiResponse={aiResponse}
+                    onSaveDocument={saveTranslatedDocument}
+
                 />
+
+
 
                 <QuestionModal
                     isOpen={showQuestionModal}
