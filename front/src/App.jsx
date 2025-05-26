@@ -1,6 +1,3 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import './App.css'
 import {configureStore} from "@reduxjs/toolkit";
 import userSlice from "./store/userSlice.jsx";
@@ -16,6 +13,7 @@ const Login = React.lazy(() => import('./components/Login/LoginPage.jsx'));
 const Register = React.lazy(() => import('./components/RegisterPage/RegisterPage.jsx'));
 const AllDocuments = React.lazy(() => import('./components/AllDocument/AllDocuments.jsx'));
 const Document = React.lazy(() => import('./components/Document/Document.jsx'));
+const Error404 =React.lazy(()=>import('./components/Error404.jsx'));
 
 const myStore = configureStore({
     reducer:{
@@ -29,6 +27,7 @@ function App() {
          <Provider store={myStore}>
               <Header />
              <Routes>
+                <Route path='*'  element={<Suspense fallback={'Loading...'}><Error404/></Suspense>}/>
                  <Route path='/' element={<Suspense fallback={'Loading...'}><HomePage /></Suspense>} />
                  <Route path='/Register' element={<Suspense fallback={'Loading...'}><Register /></Suspense>} />
                  <Route path='/AllDocuments' element={<Suspense fallback={'Loading...'}><AllDocuments /></Suspense>} />
