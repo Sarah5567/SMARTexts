@@ -4,8 +4,11 @@ import axios from "axios";
 import {useDispatch} from "react-redux";
 import {setUser} from "../../store/userSlice.jsx";
 import {useNavigate} from "react-router-dom";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 export default function Signup() {
+    const { showError } = useAlert();
+
     const {
         register,
         handleSubmit,
@@ -38,6 +41,7 @@ export default function Signup() {
         }
         catch(err){
             console.log('something went wrong: ' + err.message)
+            showError('Registration Failed', 'An error occurred during registration.');
         }
     };
 
@@ -112,7 +116,7 @@ export default function Signup() {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition cursor-pointer"
                     >
                         Sign Up
                     </button>

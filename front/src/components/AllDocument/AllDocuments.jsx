@@ -2,7 +2,9 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import AddNew from './AddNewDocument.jsx'
-import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2 } from "lucide-react";
+import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2, Download } from "lucide-react";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
+import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
 
 export default function DocumentsPage() {
     const [searchType, setSearchType] = useState("standard"); // standard or ai
@@ -13,6 +15,9 @@ export default function DocumentsPage() {
     const [numDocuments, setNumDocument] = useState(0)
     const [countUpdated, setCountUpdated] = useState(0)
     const [countCreated, setCountCreated] = useState(0)
+    const { showSuccess, showError } = useAlert();
+
+    const downloadDocument = useDownloadDocument(documents, showError);
 
     useEffect(() => {
         const getDocuments = async () => {
@@ -38,6 +43,7 @@ export default function DocumentsPage() {
                 }).length);
             } catch (err) {
                 console.error(err);
+                showError('Load failed', 'Failed to load documents from server.');
             }
             finally {
                 setLoading(false);
@@ -83,23 +89,16 @@ export default function DocumentsPage() {
             await axios.delete(`http://localhost:8080/document/deleteDocument/${docId}`,
             {withCredentials: true,})
             console.log(`document ${docId} deleted`)
+            showSuccess('Document deleted', 'The document was deleted successfully.');
             setTrigger(trigger+1)
-
         } catch (err) {
             console.error(`deleting ${docId} failed. error details:\n${err}`);
+            showError('Delete failed', 'Failed to delete the document.');
         }
         setLoading(false);
     }
-    // const getDocumentIcon = (title) => {
-    //     const lowerTitle = title.toLowerCase();
-    //     if (lowerTitle.includes('דוח') || lowerTitle.includes('report')) {
-    //         return <FileText className="h-12 w-12 text-blue-500" />;
-    //     }
-    //     return <File className="h-12 w-12 text-gray-500" />;
-    // };
-
     return (
-        <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center p-6 overflow-auto">
+        <div className="w-screen h-screen bg-gradient-to-tl from-indigo-50 via-white to-purple-50 flex flex-col items-center overflow-auto pt-20">
             {isOpen && <AddNew setIsOpen = {setIsOpen} renderDocuments = {()=>setTrigger(trigger + 1)}/>}
             {loading && (
                 <div className="fixed inset-0 flex justify-center items-center z-40 pointer-events-none">
@@ -116,7 +115,9 @@ export default function DocumentsPage() {
 
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">My Documents</h1>
+                            <h1 className="text-4xl font-bold text-blue-600 mb-1">
+                                My Documents
+                            </h1>
                             <p className="text-gray-500">Organize and access your files intuitively</p>
                         </div>
                         <div className="flex gap-4 mt-4 md:mt-0">
@@ -227,16 +228,19 @@ export default function DocumentsPage() {
                                     {/* Document Icon and Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                            <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
-                                                <File className="h-6 w-6 text-white" />
-                                            </div>
-                                            <Link to={`/Document/${doc._id}`}>
-                                            <div className="flex-1">
-                                                <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
-                                                    {doc.title}
-                                                </h2>
-                                            </div>
+                                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                                <div className="h-12 w-12 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-500 shadow-sm">
+                                                    <File className="h-6 w-6 text-white" />
+                                                </div>
+                                                <Link to={`/Document/${doc._id}`}>
+                                                    <div className="flex-1">
+                                                        <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
+                                                            {doc.title}
+                                                        </h2>
+                                                    </div>
                                                 </Link>
+                                            </div>
+
                                         </div>
                                     </div>
 
@@ -259,6 +263,13 @@ export default function DocumentsPage() {
                                                 <span>Updated: {new Date(doc.updatedAt).toLocaleDateString()}</span>
                                             </div>
                                         </div>
+                                        <button className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer" onClick={() => downloadDocument(doc._id)}>
+                                     {/* <span className="mr-2 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+                                           Download
+                                        </span> */}
+                                    <Download className="ml-22 h-5 w-5 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                                        </button>
+
                                         <Link to={`/Document/${doc._id}`}>
                                         <button className="flex items-center text-blue-600 font-medium hover:text-blue-800 transition cursor-pointer">
                                         <span className="ml-1 transform transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
@@ -268,6 +279,7 @@ export default function DocumentsPage() {
                                         </button>
                                         </Link>
                                     </div>
+                                       
 
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -278,15 +290,6 @@ export default function DocumentsPage() {
                             </div>
                     ))}
                 </div>
-
-
-
-                {/*/!* View More Button *!/*/}
-                {/*<div className="mt-8 text-center">*/}
-                {/*    <button className="px-8 py-2 border border-gray-300 rounded-full bg-white shadow-sm text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition">*/}
-                {/*        View More Documents*/}
-                {/*    </button>*/}
-                {/*</div>*/}
             </div>
         </div>
     );

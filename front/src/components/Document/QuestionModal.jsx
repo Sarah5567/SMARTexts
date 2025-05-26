@@ -22,7 +22,7 @@ const QuestionModal = ({ isOpen, onClose, question, setQuestion, loading, onAskQ
                 <button
                     onClick={onAskQuestion}
                     disabled={loading || !question.trim()}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-xl shadow-lg hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all rounded-xl shadow-lg hover:shadow-xl cursor-pointer"
                 >
                     {loading ? 'Finding answer...' : 'Get Answer'}
                 </button>

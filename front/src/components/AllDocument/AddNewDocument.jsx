@@ -3,6 +3,7 @@ import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?worker';
 import axios from "axios";
+import {useAlert} from "../../context/alerts/useAlert.jsx";
 
 // הגדרה של worker
 pdfjsLib.GlobalWorkerOptions.workerPort = new pdfWorker();
@@ -13,6 +14,8 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [dragActive, setDragActive] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { showSuccess, showError } = useAlert();
+
 
     const acceptedTypes = {
         'text/plain': '.txt',
@@ -26,8 +29,6 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
             if (!documentName) {
                 setDocumentName(file.name.split('.')[0]);
             }
-        } else {
-            alert('אנא בחר קובץ מסוג TXT, PDF או DOCX');
         }
     };
 
@@ -77,7 +78,7 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
             let content
 
             // כאן תוכל להוסיף את הקריאה לשרת שלך
-            console.log('שמירת מסמך:', { name: documentName, file: selectedFile });
+            console.log('save document: ', { name: documentName, file: selectedFile });
 
             switch (selectedFile.type) {
                 case 'application/pdf':
@@ -106,12 +107,13 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
             setSelectedFile(null);
             setIsOpen(false);
             renderDocuments()
-            alert('המסמך נשמר בהצלחה!');
+            showSuccess('Document Saved', 'The document was saved successfully.');
         } catch (error) {
             console.error('שגיאה בשמירת המסמך:', error);
-            alert('אירעה שגיאה בשמירת המסמך');
+            showError('Save Failed', 'The document could not be saved.');
             setDocumentName('');
             setSelectedFile(null);
+            showError('document saving failed')
         } finally {
             setLoading(false);
         }

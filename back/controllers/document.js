@@ -160,22 +160,26 @@ const question = async (req, res) =>{
     }
 }
 const generateInsights = async (req, res) => {
-    const { documentId } = req.body;
+    console.log('trying to generate insights....')
+    const { docId } = req.body;
+    const userId = req.userId
 
     try {
-        const document = await Document.findById(documentId);
-        if (!document) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
+        // const document = await Document.findById(documentId);
+        // if (!document) {
+        //     return res.status(404).json({ message: 'Document not found' });
+        // }
 
-        const insights = await DocumentService.getInsightsFromText(document.content);
+        const insights = await DocumentService.getInsightsFromText(userId, docId);
 
-        // עדכון המסמך עם התובנות אם רוצים
-        document.summarize = insights;
-        await document.save();
+        // // עדכון המסמך עם התובנות אם רוצים
+        // document.summarize = insights;
+        // await document.save();
 
-        res.status(200).json({ insights });
+        res.status(200).json({insights: insights });
     } catch (error) {
+        if(error.message === "document not found")
+            res.status(404).json({message: error.message})
         res.status(500).json({ message: error.message });
     }
 };
