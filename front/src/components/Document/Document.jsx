@@ -98,11 +98,13 @@ const Document = () => {
                 { withCredentials: true }
             );
             setTitle(response.data.title);
-
             showSuccess('Document saved', 'The document name was saved successfully.');
         } catch (error) {
             console.error('Error saving changes:', error);
             showError('Save failed', 'Failed to save the document name.');
+        }
+        finally {
+            setLoading(false)
         }
     };
     const handleTranslate = async () => {
