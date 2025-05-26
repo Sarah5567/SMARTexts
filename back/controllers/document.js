@@ -19,6 +19,12 @@ async function createDocument(req, res) {
     const userId = req.userId
     const {title, content} = req.body;
     try {
+        console.log('title: ' + title)
+        console.log('title: ', title)
+        console.log('content: ' + content)
+        console.log('content: ', content)
+        if(content == '')
+            console.log('content is empty')
         // Create a new document with provided title and content
         const document = await DocumentService.createDocument(userId, title, content)
         return res.status(200).json(document);
@@ -79,7 +85,10 @@ const updateDocument = async (req, res) => {
         }
         document.title = title;
         document.content = content;
-        document.summary = await DocumentService.cohereChat("Summarize the following text very shortly:", content)
+        if (content && content.trim())
+            document.summary = await DocumentService.cohereChat("Summarize the following text very shortly:", content)
+        else
+            document.summary = ''
         await document.save();
 
         res.status(200).json(document);
