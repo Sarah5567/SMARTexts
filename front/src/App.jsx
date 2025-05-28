@@ -7,6 +7,7 @@ import {BrowserRouter} from "react-router-dom";
 import React from "react";
 import { Routes, Route } from 'react-router-dom';
 import { Suspense } from 'react';
+import {AlertProvider} from "./context/alerts/AlertProvider.jsx";
 
 const HomePage = React.lazy(() => import('./components/HomePage.jsx'));
 const Login = React.lazy(() => import('./components/Login/LoginPage.jsx'));
@@ -24,19 +25,21 @@ const myStore = configureStore({
 function App() {
   return (
       <BrowserRouter>
-         <Provider store={myStore}>
-              <Header />
-             <Routes>
-                <Route path='*'  element={<Suspense fallback={'Loading...'}><Error404/></Suspense>}/>
-                 <Route path='/' element={<Suspense fallback={'Loading...'}><HomePage /></Suspense>} />
-                 <Route path='/Register' element={<Suspense fallback={'Loading...'}><Register /></Suspense>} />
-                 <Route path='/AllDocuments' element={<Suspense fallback={'Loading...'}><AllDocuments /></Suspense>} />
-                 <Route path='/Login' element={<Suspense fallback={'Loading...'}><Login /></Suspense>} />
-                 <Route path='/Document/:id' element={<Suspense fallback={'Loading...'}><Document /></Suspense>} />
+          <AlertProvider>
+              <Provider store={myStore}>
+                  <Header />
+                 <Routes>
+                    <Route path='*'  element={<Suspense fallback={'Loading...'}><Error404/></Suspense>}/>
+                     <Route path='/' element={<Suspense fallback={'Loading...'}><HomePage /></Suspense>} />
+                     <Route path='/Register' element={<Suspense fallback={'Loading...'}><Register /></Suspense>} />
+                     <Route path='/AllDocuments' element={<Suspense fallback={'Loading...'}><AllDocuments /></Suspense>} />
+                     <Route path='/Login' element={<Suspense fallback={'Loading...'}><Login /></Suspense>} />
+                     <Route path='/Document/:id' element={<Suspense fallback={'Loading...'}><Document /></Suspense>} />
 
-             </Routes>
-         </Provider>
-    </BrowserRouter>
+                 </Routes>
+             </Provider>
+          </AlertProvider>
+      </BrowserRouter>
 
   )
 }
