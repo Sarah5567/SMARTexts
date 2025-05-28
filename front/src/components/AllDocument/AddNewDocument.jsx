@@ -5,7 +5,7 @@ import pdfWorker from 'pdfjs-dist/build/pdf.worker?worker';
 import axios from "axios";
 import {useAlert} from "../../context/alerts/useAlert.jsx";
 
-// הגדרה של worker
+// definition of worker
 pdfjsLib.GlobalWorkerOptions.workerPort = new pdfWorker();
 
 
@@ -67,13 +67,7 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
         setLoading(true);
 
         try {
-            // const formData = new FormData();
-            // formData.append('document', selectedFile);
-            // formData.append('name', documentName.trim());
-
             let content
-
-            // כאן תוכל להוסיף את הקריאה לשרת שלך
             console.log('save document: ', { name: documentName, file: selectedFile });
 
             if(!selectedFile)
@@ -96,7 +90,6 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
                 }
             }
 
-            console.log("file content: \n" + content)
             await axios.post('http://localhost:8080/document/createDocument', {
                 title: documentName.trim(),
                 content: content
@@ -110,7 +103,7 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
             renderDocuments()
             showSuccess('Document Saved', 'The document was saved successfully.');
         } catch (error) {
-            console.error('שגיאה בשמירת המסמך:', error);
+            console.error('Save Failed:', error);
             showError('Save Failed', 'The document could not be saved.');
             setDocumentName('');
             setSelectedFile(null);
