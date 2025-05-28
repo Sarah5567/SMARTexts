@@ -67,7 +67,7 @@ const DocumentEditor = ({ value, onChange, placeholder }) => {
             </div>
 
             {/* Navigator */}
-            <div className="flex items-center justify-center gap-4 bg-white p-3 rounded-lg">
+            <div className="flex items-center justify-center gap-4 bg-white p-3 rounded-lg">002
                 <button onClick={goToPrevPage} disabled={currentPage === 1} className="text-blue-600 cursor-pointer">
                     <ChevronLeft size={20} />
                 </button>
