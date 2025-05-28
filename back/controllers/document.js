@@ -65,25 +65,11 @@ async function deepSearch(req, res) {
 const updateDocument = async (req, res) => {
     try {
         const { id, title, content } = req.body;
-
-        const user = await User.findById(req.userId).populate('documents');
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const document = user.documents.find(doc => doc._id.toString() === id);
-
-        if (!document) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
-        document.title = title;
-        document.content = content;
-        document.summary = await DocumentService.cohereChat("Summarize the following text very shortly:", content)
-        await document.save();
-
+        const document = await DocumentService.updateDocument(req.userId, id, title, content)
         res.status(200).json(document);
     } catch (err) {
+        if(err.message == "Document not found")
+            res.status(400).json({massage: err.message})
         res.status(500).json({ message: 'Server error' });
     }
 };

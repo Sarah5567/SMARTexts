@@ -12,14 +12,39 @@ async function getDocument(userId, docId){
 }
 
 async function createDocument(userId, title, content){
-    //summarize the text to improve search speed in the future
-    const summary = await cohereChat("Summarize the following text very shortly:", content)
-    // Create a new document with provided title and content
-    const document = new Document({ title, content, summary });
+    let document
+    if(content == '')
+        document = new Document({ title });
+    else{
+        //summarize the text to improve search speed in the future
+        summary = await cohereChat("Summarize the following text very shortly:", content)
+        // Create a new document with provided title and content
+        document = new Document({ title, content, summary });
+    }
     await document.save()
     await User.findByIdAndUpdate(userId, {$push: {documents: document._id}})
 
     return document;
+}
+
+
+async function updateDocument(userId, id, title, content){
+    const user = await User.findById(userId).populate('documents');
+
+
+    const document = user.documents.find(doc => doc._id.toString() === id);
+
+    if (!document) {
+        throw new Error('Document not found')
+    }
+    document.title = title;
+    document.content = content;
+    if (content && content.trim())
+        document.summary = await cohereChat("Summarize the following text very shortly:", content)
+    else
+        document.summary = ''
+    await document.save();
+    return document
 }
 
 async function searchDocuments(userId, query) {
@@ -156,6 +181,7 @@ async function getInsightsFromText(userId, docId) {
 module.exports = {
     getDocument,
     createDocument,
+    updateDocument,
     searchDocuments,
     deepSearch,
     translate,

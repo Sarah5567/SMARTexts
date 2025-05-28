@@ -1,20 +1,15 @@
-
-// TextEditor.jsx - Main Component
-import { Save, Edit2 } from 'lucide-react';
+import { Save, Edit2, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import TranslateModal from './TranslateModal.jsx';
 import QuestionModal from './QuestionModal.jsx';
 import SummaryModal from './SummaryModal.jsx';
 import InsightModal from './InsightModal.jsx';
 import AIToolsPanel from '../AIToolsPanel.jsx';
+import DocumentEditor from './DocumentEditor.jsx';
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { useAlert } from "../../context/alerts/useAlert.jsx";
-import { Download } from 'lucide-react';
+import { useAlert } from "../../hooks/useAlert.jsx";
 import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
-
-
-
 
 const Document = () => {
     const { id } = useParams();
@@ -36,35 +31,32 @@ const Document = () => {
     const [docName, setDocName] = React.useState('');
     const [isSaving, setIsSaving] = React.useState(false);
 
-
-const saveTranslatedDocument = async (name, content) => {
-    setIsSaving(true);
-    try {
-         await axios.post('http://localhost:8080/document/createDocument', {
+    const saveTranslatedDocument = async (name, content) => {
+        setIsSaving(true);
+        try {
+            await axios.post('http://localhost:8080/document/createDocument', {
                 title: name,
                 content: content
             }, {
                 withCredentials: true
-});
+            });
 
-        setDocName(name);
-        setTranslatedText(content);
-        showSuccess('Document Saved', 'The translated document has been saved successfully.');
+            setDocName(name);
+            setTranslatedText(content);
+            showSuccess('Document Saved', 'The translated document has been saved successfully.');
         } catch (error) {
-        console.error('Error saving document:', error);
-        showError('Save Error', 'An error occurred while saving the translated document.');
-    } finally {
-        setIsSaving(false);
-    }
-};
-
+            console.error('Error saving document:', error);
+            showError('Save Error', 'An error occurred while saving the translated document.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     useEffect(() => {
         if (!isEditing && id && title && text) {
             handleSaveTitle();
         }
     }, [isEditing]);
-
 
     useEffect(() => {
         const fetchDocument = async () => {
@@ -93,7 +85,6 @@ const saveTranslatedDocument = async (name, content) => {
         }
     }, [id]);
 
-
     const handleSave = async () => {
         setLoading(true);
         try {
@@ -117,6 +108,7 @@ const saveTranslatedDocument = async (name, content) => {
             setLoading(false)
         }
     };
+
     const handleSaveTitle = async () => {
         setLoading(true);
         try {
@@ -139,6 +131,7 @@ const saveTranslatedDocument = async (name, content) => {
             setLoading(false)
         }
     };
+
     const handleTranslate = async () => {
         setLoading(true);
         try {
@@ -154,34 +147,13 @@ const saveTranslatedDocument = async (name, content) => {
             );
 
             setAiResponse(response.data.text.text);
-            setTranslatedText(response.data.text.text);  
+            setTranslatedText(response.data.text.text);
         } catch (error) {
             console.error('Translation error:', error);
             showError('Translation Failed', 'An error occurred while translating the document.');
         }
         setLoading(false);
     };
-
-    // const handleTranslate = async () => {
-    //     setLoading(true);
-    //     try {
-    //         let langCode = targetLanguage.toUpperCase();
-    //         if (langCode.length === 2) {
-    //             if (langCode === 'EN') langCode = 'EN-US';
-    //         }
-
-    //         const response = await axios.post(
-    //             'http://localhost:8080/document/translate',
-    //             { text, language: langCode },
-    //             { withCredentials: true }
-    //         );
-    //         setAiResponse(response.data.text.text);
-    //     } catch (error) {
-    //         console.error('Translation error:', error);
-    //         showError('Translation Failed', 'An error occurred while translating the document.');
-    //     }
-    //     setLoading(false);
-    // };
 
     const handleSummarize = async () => {
         setLoading(true);
@@ -239,30 +211,6 @@ const saveTranslatedDocument = async (name, content) => {
         }
     };
 
-
-    const simulateAIResponse = (type, input = '') => {
-        setLoading(true);
-        setTimeout(() => {
-            switch (type) {
-                case 'translate':
-                    setAiResponse(`Translation to ${targetLanguage}: \n${text.substring(0, 100)}...`);
-                    break;
-                case 'question':
-                    setAiResponse(`Answer to question "${input}":\nBased on your text, here is the detailed answer...`);
-                    break;
-                case 'summary':
-                    setAiResponse(`Text Summary:\nThe text discusses... The main points are...`);
-                    break;
-                case 'insight':
-                    setAiResponse(`Insights from text:\n1. Important first point...\n2. Additional insight...\n3. Practical recommendation...`);
-                    break;
-            }
-            setLoading(false);
-        }, 1500);
-    };
-
-
-
     const resetAIResponse = () => {
         setAiResponse('');
     };
@@ -275,29 +223,26 @@ const saveTranslatedDocument = async (name, content) => {
                 </div>
             )}
             <div className="max-w-7xl mx-auto px-6 py-8">
-                {/* Header */}
                 <div className="mb-8 text-center">
                     <h1 className="text-4xl font-light text-blue-900 mb-4">
                         Advanced Text Editor
                     </h1>
                 </div>
 
-                {/* Main Content */}
-                <div className="flex gap-8">
-                    {/* Text Editor - Main Content */}
+                <div className="flex flex-col lg:flex-row gap-8">
                     <div className="flex-1">
                         <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-1 flex items-center justify-between">
+                            <div className="bg-gradient-to-r from-blue-600 to-violet-600 px-8 py-4 flex items-center justify-between">
                                 {isEditing ? (
                                     <input
                                         type="text"
                                         value={title}
                                         autoFocus
                                         onChange={(e) => setTitle(e.target.value)}
-                                        onBlur={() => setIsEditing(false)}  // סיום עריכה כשהמשתמש יוצא מהשדה
+                                        onBlur={() => setIsEditing(false)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
-                                                setIsEditing(false);  // סיום עריכה בלחיצת Enter
+                                                setIsEditing(false);
                                             }
                                         }}
                                         className="text-xl font-medium rounded px-2 py-1"
@@ -311,7 +256,7 @@ const saveTranslatedDocument = async (name, content) => {
                                 {!isEditing && (
                                     <button
                                         onClick={() => setIsEditing(true)}
-                                        className="p-2 rounded hover:bg-blue-100 transition-colors cursor-pointer"
+                                        className="p-2 rounded hover:bg-white/10 transition-colors cursor-pointer"
                                         title="Edit Title"
                                     >
                                         <Edit2 size={20} color="#fff" />
@@ -319,16 +264,14 @@ const saveTranslatedDocument = async (name, content) => {
                                 )}
                             </div>
 
-                            <div className="p-8">
-
-
-                                <textarea
+                            <div className="p-4 bg-white overflow-x-auto">
+                                <DocumentEditor
                                     value={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                    className="w-full h-96 p-6 border-2 border-blue-100 bg-blue-50 bg-opacity-30 text-blue-900 rounded-xl text-base leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all"
+                                    onChange={setText}
                                     placeholder="Start typing your text here..."
                                 />
                             </div>
+
                             <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-8 py-6 border-t border-blue-100">
                                 <div className="flex justify-end gap-4">
                                     <button
@@ -339,7 +282,7 @@ const saveTranslatedDocument = async (name, content) => {
                                         Save Changes
                                     </button>
                                     <button
-                                        onClick={() => downloadDocument(document._id)}
+                                        onClick={() => downloadDocument(document?._id)}
                                         className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-3 rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
                                     >
                                         <Download size={18} />
@@ -350,9 +293,8 @@ const saveTranslatedDocument = async (name, content) => {
                         </div>
                     </div>
 
-                    {/* AI Tools Panel - Right Side */}
-                    <div className="w-80">
-                        <div className="sticky top-8">
+                    <div className="w-full lg:w-80">
+                        <div className="lg:sticky lg:top-42">
                             <AIToolsPanel
                                 onTranslate={() => {
                                     resetAIResponse();
@@ -375,17 +317,6 @@ const saveTranslatedDocument = async (name, content) => {
                     </div>
                 </div>
 
-
-                {/* <TranslateModal
-                    isOpen={isTranslateOpen}
-                    onClose={() => setIsTranslateOpen(false)}
-                    targetLanguage={targetLanguage}
-                    setTargetLanguage={setTargetLanguage}
-                    loading={loading}
-                    onTranslate={handleTranslate}
-                    aiResponse={aiResponse}
-                    onSaveDocument={saveTranslatedDocument}  
-                /> */}
                 <TranslateModal
                     isOpen={showTranslateModal}
                     onClose={() => setShowTranslateModal(false)}
@@ -395,10 +326,7 @@ const saveTranslatedDocument = async (name, content) => {
                     onTranslate={handleTranslate}
                     aiResponse={aiResponse}
                     onSaveDocument={saveTranslatedDocument}
-
                 />
-
-
 
                 <QuestionModal
                     isOpen={showQuestionModal}
@@ -406,11 +334,9 @@ const saveTranslatedDocument = async (name, content) => {
                     question={question}
                     setQuestion={setQuestion}
                     loading={loading}
-                    onAskQuestion={handleAskQuestion}  // ← כאן
+                    onAskQuestion={handleAskQuestion}
                     aiResponse={aiResponse}
                 />
-
-
 
                 <SummaryModal
                     isOpen={showSummaryModal}
@@ -419,7 +345,6 @@ const saveTranslatedDocument = async (name, content) => {
                     onSummarize={handleSummarize}
                     aiResponse={aiResponse}
                 />
-
 
                 <InsightModal
                     isOpen={showInsightModal}

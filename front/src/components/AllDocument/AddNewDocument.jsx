@@ -3,9 +3,9 @@ import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?worker';
 import axios from "axios";
-import {useAlert} from "../../context/alerts/useAlert.jsx";
+import {useAlert} from "../../hooks/useAlert.jsx";
 
-// הגדרה של worker
+// definition of worker
 pdfjsLib.GlobalWorkerOptions.workerPort = new pdfWorker();
 
 
@@ -63,39 +63,33 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
     };
 
     const handleSave = async () => {
-        if (!selectedFile || !documentName.trim()) {
-            alert('אנא בחר קובץ והכנס שם למסמך');
-            return;
-        }
 
         setLoading(true);
 
         try {
-            // const formData = new FormData();
-            // formData.append('document', selectedFile);
-            // formData.append('name', documentName.trim());
-
             let content
-
-            // כאן תוכל להוסיף את הקריאה לשרת שלך
             console.log('save document: ', { name: documentName, file: selectedFile });
 
-            switch (selectedFile.type) {
-                case 'application/pdf':
-                    content = await getPDFContent(selectedFile)
-                    break;
-                case 'text/plain':
-                    content = await getTXTContent(selectedFile)
-                    break;
-                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                    content = await getDOCXContent(selectedFile)
-                    break;
-                default:
-                    console.log('Unsupported file type');
-                    break;
+            if(!selectedFile)
+                content = ''
+            else{
+                console.log('in switch')
+                switch (selectedFile.type) {
+                    case 'application/pdf':
+                        content = await getPDFContent(selectedFile)
+                        break;
+                    case 'text/plain':
+                        content = await getTXTContent(selectedFile)
+                        break;
+                    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                        content = await getDOCXContent(selectedFile)
+                        break;
+                    default:
+                        console.log('Unsupported file type');
+                        break;
+                }
             }
 
-            console.log("file content: \n" + content)
             await axios.post('http://localhost:8080/document/createDocument', {
                 title: documentName.trim(),
                 content: content
@@ -109,7 +103,7 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
             renderDocuments()
             showSuccess('Document Saved', 'The document was saved successfully.');
         } catch (error) {
-            console.error('שגיאה בשמירת המסמך:', error);
+            console.error('Save Failed:', error);
             showError('Save Failed', 'The document could not be saved.');
             setDocumentName('');
             setSelectedFile(null);
@@ -282,7 +276,7 @@ export default function DocumentUploadModal({setIsOpen, renderDocuments}) {
                             </button>
                             <button
                                 onClick={handleSave}
-                                disabled={!selectedFile || !documentName.trim() || loading}
+                                disabled={!documentName.trim() || loading}
                                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition font-medium disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                             >
                                 {loading ? 'saving document...' : 'save'}

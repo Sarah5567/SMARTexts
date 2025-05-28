@@ -10,12 +10,12 @@ const DocumentSchema   = new mongoose.Schema(
         // Store as HTML for text formatting (e.g., <b> for bold, <i> for italics)
         content: {
             type: String,
-            required: true
+            default: ''
         },
 
         summary: {
             type: String,
-            required: true
+            default: ''
         }
     },
     {

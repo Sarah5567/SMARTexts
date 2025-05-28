@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import AddNew from './AddNewDocument.jsx'
 import { FileText, File, Calendar, Eye, Search, Zap, Plus, Trash2, Download } from "lucide-react";
-import {useAlert} from "../../context/alerts/useAlert.jsx";
+import {useAlert} from "../../hooks/useAlert.jsx";
 import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
 
 export default function DocumentsPage() {
