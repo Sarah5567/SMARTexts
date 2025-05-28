@@ -3,7 +3,7 @@ import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?worker';
 import axios from "axios";
-import {useAlert} from "../../context/alerts/useAlert.jsx";
+import {useAlert} from "../../hooks/useAlert.jsx";
 
 // definition of worker
 pdfjsLib.GlobalWorkerOptions.workerPort = new pdfWorker();

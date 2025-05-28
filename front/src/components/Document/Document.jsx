@@ -8,7 +8,7 @@ import DocumentEditor from './DocumentEditor.jsx';
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { useAlert } from "../../context/alerts/useAlert.jsx";
+import { useAlert } from "../../hooks/useAlert.jsx";
 import useDownloadDocument from "../../hooks/useDownloadDocument.jsx";
 
 const Document = () => {

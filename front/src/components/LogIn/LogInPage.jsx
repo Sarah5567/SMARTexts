@@ -4,7 +4,7 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux'
 import {setUser} from '../../store/userSlice.jsx'
 import {useNavigate} from "react-router-dom";
-import {useAlert} from "../../context/alerts/useAlert.jsx";
+import {useAlert} from "../../hooks/useAlert.jsx";
 import { LogIn, Mail, Lock, User } from "lucide-react";
 
 export default function Main() {
