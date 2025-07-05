@@ -142,7 +142,7 @@ async function translate(text, language){
 
 async function summarize(userId, docId){
     document = await getDocument(userId, docId)
-    return cohereChat("Summarize the following text very shortly:", document.content )
+    return document.summary
 }
 
 async function QA(userId, docId, question){

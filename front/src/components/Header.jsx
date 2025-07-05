@@ -106,13 +106,6 @@ function Header() {
                                 </div>
                                  <span className="text-sm font-medium text-blue-800">{userObj.name}</span>
                                 </div>
-                                <button
-                                    onClick={toggleLogin}
-                                    className="px-3 py-1 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
-                                >
-                                    <LogOut className="w-4 h-4 mr-1" />
-                                    Sign Out
-                                </button>
                             </>
                         ) : (
                             <div className="flex items-center">
