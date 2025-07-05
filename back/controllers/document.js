@@ -76,26 +76,11 @@ const updateDocument = async (req, res) => {
 const deleteDocument = async (req, res) => {
     try {
         const { id } = req.params;
-
-        const user = await User.findById(req.userId).populate('documents');
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        const document = user.documents.find(doc => doc._id.toString() === id);
-        console.log("Found document:", document);
-        if (!document) {
-            return res.status(404).json({ message: 'Document not found' });
-        }
-        user.documents.pull(id);
-
-        await user.save();
-
-        await Document.findByIdAndDelete(id);
-        res.status(200).json({ message: 'Document deleted successfully' });
+        const userId = req.userId;
+        await DocumentService.deleteDocument(userId, id)
+        return res.status(200).json({ message: 'Document deleted successfully' });
     } catch (err) {
-        console.error("Error:", err);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(404).json({ message: 'Document not found' });
     }
 };
 
@@ -151,16 +136,8 @@ const generateInsights = async (req, res) => {
     const userId = req.userId
 
     try {
-        // const document = await Document.findById(documentId);
-        // if (!document) {
-        //     return res.status(404).json({ message: 'Document not found' });
-        // }
 
         const insights = await DocumentService.getInsightsFromText(userId, docId);
-
-        // // עדכון המסמך עם התובנות אם רוצים
-        // document.summarize = insights;
-        // await document.save();
 
         res.status(200).json({insights: insights });
     } catch (error) {

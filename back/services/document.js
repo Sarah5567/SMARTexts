@@ -47,6 +47,12 @@ async function updateDocument(userId, id, title, content){
     return document
 }
 
+async function deleteDocument(userId, id){
+    const user = await User.findById(userId).populate('documents');
+    user.documents.pull(id);
+    await user.save();
+}
+
 async function searchDocuments(userId, query) {
     const user = await User.findById(userId)
         .populate({ path: 'documents' })
@@ -181,6 +187,7 @@ async function getInsightsFromText(userId, docId) {
 module.exports = {
     getDocument,
     createDocument,
+    deleteDocument,
     updateDocument,
     searchDocuments,
     deepSearch,
