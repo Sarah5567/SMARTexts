@@ -4,19 +4,15 @@ const bcrypt= require('bcrypt')
 require('dotenv').config()
 
 const login = async (req, res) => {
-    console.log('try to login')
+
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-    console.log('email: ' + email)
-    console.log('password: ' + password)
     const foundUser = await User.findOne({ email: new RegExp(`^${email}$`, 'i') }).lean();
     if (!foundUser) {
-        console.log('user not found')
         return res.status(401).json({ message: 'Unauthorized 1' })
     }
-    console.log('user found')
     const match = await bcrypt.compare(password, foundUser.password)
     if(!match)return res.status(401).json({message:'Unauthorized 2' })
 
